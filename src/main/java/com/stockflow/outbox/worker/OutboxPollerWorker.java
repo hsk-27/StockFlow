@@ -1,5 +1,7 @@
 package com.stockflow.outbox.worker;
 
+import com.stockflow.common.metrics.StockFlowMetrics;
+import com.stockflow.outbox.consumer.DomainEventListener;
 import com.stockflow.outbox.domain.OutboxEvent;
 import com.stockflow.outbox.repository.OutboxEventRepository;
 import org.slf4j.Logger;
@@ -19,11 +21,17 @@ public class OutboxPollerWorker {
     private static final Logger log = LoggerFactory.getLogger(OutboxPollerWorker.class);
 
     private final OutboxEventRepository outboxEventRepository;
+    private final List<DomainEventListener> eventListeners;
+    private final StockFlowMetrics metrics;
     private final int batchSize;
 
     public OutboxPollerWorker(OutboxEventRepository outboxEventRepository,
+                              List<DomainEventListener> eventListeners,
+                              StockFlowMetrics metrics,
                               @Value("${stockflow.outbox.batch-size:50}") int batchSize) {
         this.outboxEventRepository = outboxEventRepository;
+        this.eventListeners = eventListeners;
+        this.metrics = metrics;
         this.batchSize = batchSize;
     }
 
@@ -48,21 +56,22 @@ public class OutboxPollerWorker {
         log.info("Processing {} outbox events", events.size());
         for (OutboxEvent event : events) {
             try {
-                // Dispatch event logic (e.g. logging/external webhooks/notifications)
-                dispatchDomainEvent(event);
+                // Dispatch to registered event listeners
+                for (DomainEventListener listener : eventListeners) {
+                    if (listener.canHandle(event.getEventType())) {
+                        listener.onEvent(event);
+                    }
+                }
                 event.markProcessed();
                 outboxEventRepository.save(event);
+                metrics.incrementOutboxProcessed();
             } catch (Exception ex) {
                 log.error("Failed to process outbox event id: {}", event.getId(), ex);
                 int backoffSeconds = (int) Math.pow(2, event.getAttemptCount()) * 5;
                 event.recordFailure(ex.getMessage(), Instant.now().plusSeconds(backoffSeconds));
                 outboxEventRepository.save(event);
+                metrics.incrementOutboxFailed();
             }
         }
-    }
-
-    private void dispatchDomainEvent(OutboxEvent event) {
-        log.info("Outbox Dispatch: [Type: {}, Aggregate: {}/{}, Payload: {}]",
-                event.getEventType(), event.getAggregateType(), event.getAggregateId(), event.getPayload());
     }
 }
