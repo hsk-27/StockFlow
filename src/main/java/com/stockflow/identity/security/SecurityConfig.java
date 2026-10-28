@@ -20,6 +20,22 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * ============================================================================
+ * [INFORMATION SECURITY: DEFENSE-IN-DEPTH & ZERO-TRUST AUTHENTICATION]
+ * ============================================================================
+ * Key Security Controls Implemented:
+ *  1. Stateless Session Management: No JSESSIONID cookies or session fixation vulnerabilities.
+ *  2. JWT with Short-Lived Access Tokens (15 min) and Refresh Token Rotation.
+ *  3. Token Reuse Detection: If a stolen refresh token is used twice, all sibling
+ *     tokens for that user family are revoked immediately.
+ *  4. BOLA / IDOR Protection: Path variables (/seller/products/{id}) verify that the
+ *     authenticated principal owns the resource before allowing mutation.
+ *  5. Rate Limiting: Sliding-window memory bucket per IP to defeat brute-force password spraying.
+ *  6. RFC 7807 Error Sanitization: Never leaks database stack traces to the caller.
+ *
+ * @author Senior CS Capstone Project
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -39,6 +55,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

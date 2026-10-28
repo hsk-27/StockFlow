@@ -1,0 +1,230 @@
+### =======================================================================
+### StockFlow API Client Test Suite (VS Code REST Client / IntelliJ HTTP Client)
+### Senior Capstone Demonstration Workflows
+### =======================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
+### -----------------------------------------------------------------------
+### 1. HEALTH & METRICS
+### -----------------------------------------------------------------------
+
+### Check System Health
+GET http://localhost:8080/actuator/health
+
+### Check Prometheus Metrics
+GET http://localhost:8080/actuator/prometheus
+
+### -----------------------------------------------------------------------
+### 2. AUTHENTICATION & TOKENS
+### -----------------------------------------------------------------------
+
+### Login as Customer
+# @name customerLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@stockflow.com",
+  "password": "Password123!"
+}
+
+### Store Customer Access Token
+@customerToken = {{customerLogin.response.body.accessToken}}
+@customerRefreshToken = {{customerLogin.response.body.refreshToken}}
+
+### Login as Seller
+# @name sellerLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "seller@stockflow.com",
+  "password": "Password123!"
+}
+
+### Store Seller Access Token
+@sellerToken = {{sellerLogin.response.body.accessToken}}
+
+### Login as Administrator
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@stockflow.com",
+  "password": "Password123!"
+}
+
+### Store Admin Access Token
+@adminToken = {{adminLogin.response.body.accessToken}}
+
+### Rotate Access Token using Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{customerRefreshToken}}"
+}
+
+### -----------------------------------------------------------------------
+### 3. CATALOG & SEARCH
+### -----------------------------------------------------------------------
+
+### Search Public Products
+GET {{baseUrl}}/products?page=0&size=10
+
+### List Active Categories
+GET {{baseUrl}}/categories
+
+### -----------------------------------------------------------------------
+### 4. CART & CHECKOUT WORKFLOW
+### -----------------------------------------------------------------------
+
+### View Customer Cart
+GET {{baseUrl}}/cart
+Authorization: Bearer {{customerToken}}
+
+### Add Seed Item to Cart
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "sku": "SKU-AUDIO-PRO-BLK",
+  "quantity": 1
+}
+
+### Checkout Order with Idempotency Key
+# @name checkoutOrder
+POST {{baseUrl}}/orders/checkout
+Authorization: Bearer {{customerToken}}
+Idempotency-Key: c9d8e7a6-b5c4-4d3e-2f1a-0b9c8d7e6f5a
+Content-Type: application/json
+
+{
+  "shippingAddress": "450 University Ave, Palo Alto, CA"
+}
+
+### Store Created Order ID
+@orderId = {{checkoutOrder.response.body.id}}
+
+### Retry Same Checkout with Same Idempotency Key (Demonstrates Cached Idempotency 201)
+POST {{baseUrl}}/orders/checkout
+Authorization: Bearer {{customerToken}}
+Idempotency-Key: c9d8e7a6-b5c4-4d3e-2f1a-0b9c8d7e6f5a
+Content-Type: application/json
+
+{
+  "shippingAddress": "450 University Ave, Palo Alto, CA"
+}
+
+### -----------------------------------------------------------------------
+### 5. NON-BLOCKING PAYMENT INITIATION
+### -----------------------------------------------------------------------
+
+### Initiate Payment
+POST {{baseUrl}}/payments/initiate
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}"
+}
+
+### Ingest Signed Provider Webhook (Simulating Payment Gateway Callback)
+# Note: HMAC-SHA256 of payload with secret "whsec_test_mock_secret_key_12345"
+POST {{baseUrl}}/payments/webhooks
+Content-Type: application/json
+X-Webhook-Signature: 669a9e334a132fa07b22a0ce8cce393526543b5735e5d1645e76cae75ea8b948
+
+{
+  "eventId": "evt_test_webhook_001",
+  "eventType": "payment.succeeded",
+  "providerReference": "PAY-MOCK-REF-12345",
+  "orderId": "{{orderId}}",
+  "amount": 199.99,
+  "currency": "USD",
+  "status": "SUCCEEDED"
+}
+
+### -----------------------------------------------------------------------
+### 6. SELLER FULFILMENT & TRACKING
+### -----------------------------------------------------------------------
+
+### Dispatch Shipment (Seller Auth)
+# @name createShipment
+POST {{baseUrl}}/fulfilment/shipments
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "carrier": "FedEx Ground",
+  "trackingNumber": "TRK-FEDEX-998877"
+}
+
+@shipmentId = {{createShipment.response.body.id}}
+
+### Confirm Delivery (Carrier/Seller Auth)
+POST {{baseUrl}}/fulfilment/shipments/{{shipmentId}}/delivered
+Authorization: Bearer {{sellerToken}}
+
+### -----------------------------------------------------------------------
+### 7. RETURNS, RESTOCK POLICY & REFUNDS
+### -----------------------------------------------------------------------
+
+### Customer Requests Return
+# @name returnRequest
+POST {{baseUrl}}/returns
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "reason": "Exchanged mind, item unopened."
+}
+
+@returnId = {{returnRequest.response.body.id}}
+
+### Seller Approves Return
+POST {{baseUrl}}/returns/{{returnId}}/decision
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "approved": true,
+  "comments": "Approved for return within 30-day window"
+}
+
+### Seller Receives Return and Restocks to Inventory
+POST {{baseUrl}}/returns/{{returnId}}/receive
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "restockDecision": "RESTOCK"
+}
+
+### Seller Issues Refund
+POST {{baseUrl}}/returns/refunds
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "amount": 199.99,
+  "reason": "Full refund upon restock verification"
+}
+
+### -----------------------------------------------------------------------
+### 8. ADMINISTRATIVE REPORTS & AUDIT TRAIL
+### -----------------------------------------------------------------------
+
+### High-level Operational Metrics
+GET {{baseUrl}}/admin/reports/metrics
+Authorization: Bearer {{adminToken}}
+
+### Security & Financial Audit Logs
+GET {{baseUrl}}/admin/reports/audit-logs?page=0&size=20
+Authorization: Bearer {{adminToken}}

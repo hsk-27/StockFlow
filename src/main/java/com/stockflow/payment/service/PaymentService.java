@@ -61,10 +61,31 @@ public class PaymentService {
     }
 
     /**
-     * Non-blocking payment orchestration.
-     * Step 1: Create initial PENDING payment in DB (short transaction).
-     * Step 2: Make external network call to Payment Gateway WITHOUT holding any open DB transaction.
-     * Step 3: Record outcome in DB (short transaction).
+     * ========================================================================
+     * [SOFTWARE ARCHITECTURE LESSON: DECOUPLED PAYMENT BOUNDARY ANTI-PATTERN]
+     * ========================================================================
+     * Naive junior implementation:
+     *   @Transactional
+     *   public void payOrder(UUID orderId) {
+     *       order.setStatus(PAID);
+     *       gatewayClient.chargeCard(...); // BLOCKS DB THREAD FOR 2-10 SECONDS!
+     *       paymentRepo.save(...);
+     *   }
+     *
+     * Why the naive approach causes catastrophic production outages:
+     *   1. Database Connection Starvation: HikariCP typically has 10-20 connections.
+     *      Holding a connection while waiting for third-party network I/O starves
+     *      all other database queries, taking down the entire API.
+     *   2. Long-Lived Row Locks: Rows remain locked during the external call,
+     *      creating massive lock queues and cascading timeouts across unrelated requests.
+     *   3. The Two Generals Problem: If the gateway charges the card but network
+     *      times out during the DB commit, the card is charged but the DB rolls back!
+     *
+     * Our Solution (Decoupled 3-Step Non-Blocking Execution):
+     *   Step 1: Short DB Transaction (<5ms) - initialize record with state PENDING.
+     *   Step 2: External HTTP I/O (NO open DB transaction or connection held!).
+     *   Step 3: Short DB Transaction (<5ms) - record outcome as SUCCEEDED, FAILED,
+     *           or UNCERTAIN (reconciled by PaymentReconciliationWorker).
      */
     public PaymentResponse initiatePayment(UUID orderId, User customer) {
         // Step 1: Initialize payment record

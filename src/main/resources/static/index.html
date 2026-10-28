@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockFlow — Capstone Portfolio Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --primary: #38bdf8;
+            --accent: #818cf8;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        p.subtitle {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+        .card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            margin-left: 0.5rem;
+        }
+        .btn-outline:hover { background: rgba(56, 189, 248, 0.1); }
+        pre, code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #090d16;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+        pre {
+            padding: 1rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin-top: 0.5rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(52, 211, 153, 0.2);
+            color: var(--success);
+        }
+        .table-creds {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .table-creds th, .table-creds td {
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .table-creds th { color: var(--muted); font-weight: 600; }
+        footer {
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="tagline">Computer Science Senior Capstone Project</div>
+            <h1>StockFlow Backend Engine</h1>
+            <p class="subtitle">A high-concurrency multi-vendor commerce, inventory, order orchestration, and outbox backend built in Java 21 &amp; Spring Boot 3.3.5.</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📖 API Documentation</h2>
+                <p>Interactive OpenAPI 3.0 specification &amp; Swagger UI for exploring and testing endpoints live.</p>
+                <a href="/swagger-ui.html" class="btn" target="_blank">Open Swagger UI</a>
+                <a href="/v3/api-docs" class="btn btn-outline" target="_blank">JSON Docs</a>
+            </div>
+
+            <div class="card">
+                <h2>🩺 System Observability</h2>
+                <p>Real-time Spring Boot Actuator health checks and Prometheus metric scrape endpoints.</p>
+                <a href="/actuator/health" class="btn" target="_blank">Health Check</a>
+                <a href="/actuator/prometheus" class="btn btn-outline" target="_blank">Metrics</a>
+            </div>
+
+            <div class="card">
+                <h2>🔐 Seed Accounts</h2>
+                <p>Pre-populated in database with password: <code>Password123!</code></p>
+                <table class="table-creds">
+                    <tr><th>Role</th><th>Email</th></tr>
+                    <tr><td><span class="badge">ADMIN</span></td><td><code>admin@stockflow.com</code></td></tr>
+                    <tr><td><span class="badge">SELLER</span></td><td><code>seller@stockflow.com</code></td></tr>
+                    <tr><td><span class="badge">CUSTOMER</span></td><td><code>customer@stockflow.com</code></td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>⚡ Core Invariants</h2>
+                <p>Demonstrated in university technical defense:</p>
+                <ul style="padding-left: 1.2rem; color: var(--muted); font-size: 0.9rem;">
+                    <li><strong>Dijkstra's Lock Ordering:</strong> Ascending SKU sort prevents multi-item checkouts from deadlocking.</li>
+                    <li><strong>Zero Overselling:</strong> <code>reserved &lt;= on_hand</code> enforced via DB check constraints.</li>
+                    <li><strong>Idempotency:</strong> SHA-256 request hashing prevents mobile duplicate orders.</li>
+                    <li><strong>Non-Blocking Gateway:</strong> Zero open transactions during payment I/O.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2>🚀 Quick Test Execution (cURL / HTTP Client)</h2>
+            <p>You can execute all workflows directly via the bundled <code>requests.http</code> file in VS Code or IntelliJ, or login via terminal:</p>
+            <pre>curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "customer@stockflow.com", "password": "Password123!"}'</pre>
+        </div>
+
+        <footer>
+            <div>StockFlow &bull; Senior Engineering Portfolio &bull; 42 Automated Tests Passed (100%)</div>
+            <div>PostgreSQL 16 &bull; Flyway Migrations</div>
+        </footer>
+    </div>
+</body>
+</html>

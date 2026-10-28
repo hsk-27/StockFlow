@@ -99,7 +99,14 @@ public class InventoryService {
 
     /**
      * Atomically reserves stock across multiple SKUs.
-     * Enforces deadlock-free lock ordering by locking sorted SKUs ascending.
+     * 
+     * [CS OPERATING SYSTEMS CONCEPT - DIJKSTRA'S RESOURCE HIERARCHY SOLUTION]:
+     * When concurrent transactions lock multiple resources (e.g., Order 1 needs SKU-A & SKU-B;
+     * Order 2 needs SKU-B & SKU-A), an inverted lock acquisition order will trigger a database
+     * deadlock (40P01 in PostgreSQL).
+     * By sorting all SKU names in strictly ascending order before executing SELECT ... FOR UPDATE,
+     * we guarantee that all threads acquire locks in the exact same global order, making circular
+     * wait conditions mathematically impossible!
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<StockReservation> reserveStockForOrder(UUID orderId, Map<String, Integer> skuQuantities, Instant expiresAt) {

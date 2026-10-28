@@ -22,6 +22,30 @@ import java.util.HexFormat;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * ============================================================================
+ * [CS DISTRIBUTED SYSTEMS CONCEPT - AT-MOST-ONCE & EXACTLY-ONCE SEMANTICS]
+ * ============================================================================
+ * In distributed computing, network calls fail non-deterministically (Fallacies
+ * of Distributed Computing #1: "The network is reliable"). If a customer submits
+ * an order and their mobile connection drops during HTTP transmission, the client
+ * cannot know whether:
+ *   (a) The server never received the request, OR
+ *   (b) The server processed the checkout, charged the card, and only the response dropped.
+ *
+ * If the client retries blindly, the server could duplicate the charge and create
+ * two separate orders!
+ *
+ * Solution implemented here (IETF Draft 'The Idempotency-Key HTTP Header Field'):
+ *  1. Client sends a unique client-generated UUID in the 'Idempotency-Key' header.
+ *  2. We compute a SHA-256 fingerprint of the request payload to detect tampering/mismatches.
+ *  3. In an atomic transaction (REQUIRES_NEW), we insert an IdempotencyRecord with status PROCESSING.
+ *  4. If a concurrent retry hits before completion -> 409 Conflict (prevents double-execution races).
+ *  5. If the request already completed previously -> Replay the cached HTTP 201 response directly
+ *     without re-executing inventory reservations or payment processing!
+ *
+ * @author Senior CS Capstone Project
+ */
 @Service
 public class IdempotencyService {
 

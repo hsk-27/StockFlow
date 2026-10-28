@@ -18,6 +18,25 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ============================================================================
+ * [API SPECIFICATION & STANDARDS: RFC 7807 PROBLEM DETAILS]
+ * ============================================================================
+ * Why not return ad-hoc JSON errors like {"error": "bad request"}?
+ * Naive custom error formats force frontend and third-party API clients to
+ * write custom error parsers for every micro-service or endpoint.
+ *
+ * In accordance with IETF RFC 7807 ("Problem Details for HTTP APIs"), StockFlow
+ * converts all application domain exceptions into standard machine-readable
+ * ProblemDetail payloads containing:
+ *  - type: A URI reference identifying the specific problem type.
+ *  - title: A short human-readable summary.
+ *  - status: The HTTP status code.
+ *  - detail: Human-readable explanation specific to this occurrence.
+ *  - timestamp & correlationId: Enriched for distributed tracing and log analysis.
+ *
+ * @author Senior CS Capstone Project
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
