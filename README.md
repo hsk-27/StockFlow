@@ -165,11 +165,15 @@ Flyway manages migrations under `src/main/resources/db/migration/`:
 
 ## 6. REST API Reference (`/api/v1`)
 
-### 6.1 Authentication (`/api/v1/auth`)
+### 6.1 Authentication & User Management (`/api/v1/auth`, `/api/v1/admin`)
 - `POST /api/v1/auth/register`: Register user (`CUSTOMER` or `SELLER`).
-- `POST /api/v1/auth/login`: Authenticate and receive Access + Refresh tokens.
+- `POST /api/v1/auth/login`: Authenticate and receive Access + Refresh tokens. (Rate-limited via sliding window IP bucket).
 - `POST /api/v1/auth/refresh`: Rotate tokens. (Includes automatic token reuse detection).
 - `POST /api/v1/auth/logout`: Revoke active refresh token.
+- `GET /api/v1/admin/users`: Admin list all users with pagination.
+- `GET /api/v1/admin/users/{id}`: Admin inspect user details.
+- `PATCH /api/v1/admin/users/{id}/status`: Admin activate/deactivate user accounts with security audit log.
+- `GET /api/v1/admin/orders`: Admin platform-wide order inspection.
 
 ### 6.2 Catalog & Seller (`/api/v1`)
 - `GET /api/v1/products`: Search public catalog (`categoryId`, `query`, pagination).
@@ -178,6 +182,10 @@ Flyway manages migrations under `src/main/resources/db/migration/`:
 - `POST /api/v1/seller/products`: Create seller product listing with initial stock.
 - `PUT /api/v1/seller/products/{id}`: Update product (enforces seller ownership).
 - `DELETE /api/v1/seller/products/{id}`: Deactivate product listing.
+- `GET /api/v1/seller/profile`: Inspect seller store profile.
+- `PUT /api/v1/seller/profile`: Update store name and business email.
+- `GET /api/v1/seller/inventory`: List inventory items owned by authenticated seller.
+- `GET /api/v1/seller/order-items`: Query order items sold by authenticated seller.
 - `POST /api/v1/admin/categories`: Administrator category creation.
 
 ### 6.3 Inventory (`/api/v1/inventory`)
@@ -252,7 +260,7 @@ mvn clean spring-boot:run
 
 ## 8. Verification & Concurrency Test Results
 
-The project test suite validates 38 automated test cases covering domain invariants, concurrency, idempotency, and failure recovery.
+The project test suite validates 42 automated test cases covering domain invariants, concurrency, idempotency, horizontal/vertical privilege escalation, and full lifecycle commerce workflows.
 
 ### 8.1 Concurrent Last-Unit Purchase Demonstration
 - **Scenario:** Initial inventory for `SKU-HOT-ITEM-001` has exactly **1 unit** on hand (`on_hand = 1, reserved = 0, available = 1`).
