@@ -306,6 +306,8 @@ public class ChatbotService {
         String cleanQuery = query.replaceAll("(?i)(search|find|show|products?|for|cheap|buy)", "").trim();
         Page<Product> page = productRepository.searchPublicCatalog(
                 null,
+                null,
+                null,
                 cleanQuery.isEmpty() ? null : cleanQuery,
                 PageRequest.of(0, 5)
         );

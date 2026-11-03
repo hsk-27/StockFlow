@@ -71,11 +71,25 @@ Content-Type: application/json
 ### 3. CATALOG & SEARCH
 ### -----------------------------------------------------------------------
 
-### Search Public Products
-GET {{baseUrl}}/products?page=0&size=10
+### Search Public Products with Price Range
+GET {{baseUrl}}/products?minPrice=50&maxPrice=300&page=0&size=10
 
 ### List Active Categories
 GET {{baseUrl}}/categories
+
+### Admin: Update Category
+PUT {{baseUrl}}/admin/categories/c0000000-0000-0000-0000-000000000001
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Audio Equipment & Accessories",
+  "description": "Premium audio gear and headphones"
+}
+
+### Admin: Deactivate Category
+DELETE {{baseUrl}}/admin/categories/c0000000-0000-0000-0000-000000000001
+Authorization: Bearer {{adminToken}}
 
 ### -----------------------------------------------------------------------
 ### 4. CART & CHECKOUT WORKFLOW
@@ -216,6 +230,22 @@ Content-Type: application/json
   "amount": 199.99,
   "reason": "Full refund upon restock verification"
 }
+
+### Customer: List My Return Requests
+GET {{baseUrl}}/returns
+Authorization: Bearer {{customerToken}}
+
+### Seller: List Store Return Requests
+GET {{baseUrl}}/returns/seller
+Authorization: Bearer {{sellerToken}}
+
+### Seller: List Dispatched Shipments
+GET {{baseUrl}}/fulfilment/seller
+Authorization: Bearer {{sellerToken}}
+
+### Seller: Re-activate Product Listing
+POST {{baseUrl}}/seller/products/a0000000-0000-0000-0000-000000000001/activate
+Authorization: Bearer {{sellerToken}}
 
 ### -----------------------------------------------------------------------
 ### 8. ADMINISTRATIVE REPORTS & AUDIT TRAIL

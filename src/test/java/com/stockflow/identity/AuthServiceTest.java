@@ -1,5 +1,6 @@
 package com.stockflow.identity;
 
+import com.stockflow.audit.service.AuditService;
 import com.stockflow.common.exception.ConflictException;
 import com.stockflow.common.exception.UnauthorizedException;
 import com.stockflow.identity.domain.RefreshToken;
@@ -47,11 +48,14 @@ class AuthServiceTest {
     @Mock
     private JwtService jwtService;
 
+    @Mock
+    private AuditService auditService;
+
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtService);
+        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtService, auditService);
     }
 
     @Test
@@ -71,6 +75,7 @@ class AuthServiceTest {
         assertThat(response.role()).isEqualTo(Role.CUSTOMER);
         assertThat(response.accessToken()).isEqualTo("mock-access-token");
         verify(refreshTokenRepository).save(any(RefreshToken.class));
+        verify(auditService).recordAction(any(UUID.class), eq("USER_REGISTERED"), eq("User"), any(String.class), any(String.class), isNull());
     }
 
     @Test
@@ -114,5 +119,6 @@ class AuthServiceTest {
                 .hasMessageContaining("Token reuse detected");
 
         verify(refreshTokenRepository).deleteByUserId(user.getId());
+        verify(auditService).recordAction(eq(user.getId()), eq("SECURITY_ALERT_TOKEN_REUSE"), eq("RefreshToken"), eq(revokedToken.getId().toString()), any(String.class), isNull());
     }
 }

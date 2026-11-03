@@ -229,6 +229,41 @@ public class ReturnsAndRefundsService {
         return RefundResponse.from(refund);
     }
 
+    @Transactional(readOnly = true)
+    public List<ReturnResponse> getCustomerReturns(User customer) {
+        return returnRepository.findByCustomerId(customer.getId()).stream()
+                .map(ReturnResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReturnResponse> getSellerReturns(User sellerUser) {
+        if (sellerUser.getRole() == Role.ADMIN) {
+            return returnRepository.findAll().stream()
+                    .map(ReturnResponse::from)
+                    .toList();
+        }
+        Seller seller = sellerRepository.findByUserId(sellerUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Seller profile not found for user: " + sellerUser.getId()));
+        return returnRepository.findBySellerId(seller.getId()).stream()
+                .map(ReturnResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReturnResponse> getOrderReturns(UUID orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderId));
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        boolean isOwner = order.getCustomer().getId().equals(user.getId());
+        if (!isAdmin && !isOwner) {
+            throw new UnauthorizedException("You are not authorized to view return requests for this order");
+        }
+        return returnRepository.findByOrderId(orderId).stream()
+                .map(ReturnResponse::from)
+                .toList();
+    }
+
     private void validateSellerOwnership(Seller seller, User sellerUser) {
         if (sellerUser.getRole() != Role.ADMIN && !seller.getUser().getId().equals(sellerUser.getId())) {
             throw new UnauthorizedException("You are not authorized to manage returns for another seller's store");

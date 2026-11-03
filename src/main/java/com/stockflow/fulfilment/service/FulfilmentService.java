@@ -121,8 +121,36 @@ public class FulfilmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShipmentResponse> getShipmentsForOrder(UUID orderId) {
+    public List<ShipmentResponse> getShipmentsForOrder(UUID orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderId));
+
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        boolean isCustomer = order.getCustomer().getId().equals(user.getId());
+        boolean isParticipatingSeller = user.getRole() == Role.SELLER &&
+                sellerRepository.findByUserId(user.getId())
+                        .map(seller -> order.getItems().stream().anyMatch(i -> i.getSeller().getId().equals(seller.getId())))
+                        .orElse(false);
+
+        if (!isAdmin && !isCustomer && !isParticipatingSeller) {
+            throw new UnauthorizedException("You are not authorized to view shipments for this order");
+        }
+
         return shipmentRepository.findByOrderId(orderId).stream()
+                .map(ShipmentResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShipmentResponse> getSellerShipments(User sellerUser) {
+        if (sellerUser.getRole() == Role.ADMIN) {
+            return shipmentRepository.findAll().stream()
+                    .map(ShipmentResponse::from)
+                    .toList();
+        }
+        Seller seller = sellerRepository.findByUserId(sellerUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Seller profile not found for user: " + sellerUser.getId()));
+        return shipmentRepository.findBySellerId(seller.getId()).stream()
                 .map(ShipmentResponse::from)
                 .toList();
     }

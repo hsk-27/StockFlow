@@ -1,6 +1,7 @@
 package com.stockflow.fulfilment;
 
 import com.stockflow.common.exception.BusinessRuleViolationException;
+import com.stockflow.common.exception.UnauthorizedException;
 import com.stockflow.fulfilment.domain.Shipment;
 import com.stockflow.fulfilment.dto.CreateShipmentRequest;
 import com.stockflow.fulfilment.dto.ShipmentResponse;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -101,5 +103,30 @@ class FulfilmentServiceTest {
         assertThatThrownBy(() -> fulfilmentService.createShipment(request, sellerUser))
                 .isInstanceOf(BusinessRuleViolationException.class)
                 .hasMessageContaining("Order cannot be fulfilled in status PENDING_PAYMENT");
+    }
+
+    @Test
+    @DisplayName("Should prevent unauthorized third party from viewing order shipments (BOLA enforcement)")
+    void shouldEnforceBOLAOnShipmentQuery() {
+        when(orderRepository.findById(confirmedOrder.getId())).thenReturn(Optional.of(confirmedOrder));
+
+        User intruder = new User(UUID.randomUUID(), "intruder@stockflow.com", "hash", "Intruder", Role.CUSTOMER);
+
+        assertThatThrownBy(() -> fulfilmentService.getShipmentsForOrder(confirmedOrder.getId(), intruder))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessageContaining("You are not authorized to view shipments for this order");
+    }
+
+    @Test
+    @DisplayName("Should allow seller to view their dispatched shipments")
+    void shouldRetrieveSellerShipments() {
+        when(sellerRepository.findByUserId(sellerUser.getId())).thenReturn(Optional.of(seller));
+        Shipment shipment = new Shipment(UUID.randomUUID(), confirmedOrder, seller, "FedEx", "TRK-111");
+        when(shipmentRepository.findBySellerId(seller.getId())).thenReturn(List.of(shipment));
+
+        List<ShipmentResponse> responses = fulfilmentService.getSellerShipments(sellerUser);
+
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).trackingNumber()).isEqualTo("TRK-111");
     }
 }

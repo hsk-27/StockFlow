@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +31,11 @@ public class CatalogController {
     }
 
     @GetMapping("/products")
-    @Operation(summary = "Search and filter active products with pagination")
+    @Operation(summary = "Search and filter active products with pagination and price range")
     public ResponseEntity<PageResponse<ProductResponse>> getProducts(
             @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -42,7 +45,7 @@ public class CatalogController {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         PageRequest pageRequest = PageRequest.of(Math.max(0, page), Math.min(100, Math.max(1, size)), sort);
 
-        return ResponseEntity.ok(PageResponse.from(catalogService.searchCatalog(categoryId, query, pageRequest)));
+        return ResponseEntity.ok(PageResponse.from(catalogService.searchCatalog(categoryId, minPrice, maxPrice, query, pageRequest)));
     }
 
     @GetMapping("/products/{id}")
@@ -62,5 +65,22 @@ public class CatalogController {
     @Operation(summary = "Admin endpoint: Create new category")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(catalogService.createCategory(request));
+    }
+
+    @PutMapping("/admin/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Admin endpoint: Update category details")
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @PathVariable UUID id,
+            @Valid @RequestBody CategoryRequest request) {
+        return ResponseEntity.ok(catalogService.updateCategory(id, request));
+    }
+
+    @DeleteMapping("/admin/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Admin endpoint: Deactivate category")
+    public ResponseEntity<Void> deactivateCategory(@PathVariable UUID id) {
+        catalogService.deactivateCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }

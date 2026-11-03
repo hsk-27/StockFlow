@@ -1,6 +1,10 @@
 package com.stockflow.catalog;
 
+import com.stockflow.catalog.domain.Category;
 import com.stockflow.catalog.domain.Product;
+import com.stockflow.catalog.dto.CategoryRequest;
+import com.stockflow.catalog.dto.CategoryResponse;
+import com.stockflow.catalog.dto.ProductResponse;
 import com.stockflow.catalog.dto.UpdateProductRequest;
 import com.stockflow.catalog.repository.CategoryRepository;
 import com.stockflow.catalog.repository.ProductRepository;
@@ -24,8 +28,10 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CatalogServiceTest {
@@ -70,5 +76,65 @@ class CatalogServiceTest {
         assertThatThrownBy(() -> catalogService.updateProduct(productId, updateRequest, attackerUserId, false))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessageContaining("You are not authorized to modify another seller's product");
+    }
+
+    @Test
+    @DisplayName("Should successfully activate a previously deactivated product")
+    void shouldActivateProductSuccessfully() {
+        UUID ownerUserId = UUID.randomUUID();
+        User ownerUser = new User(ownerUserId, "owner@seller.com", "hash", "Owner", Role.SELLER);
+        Seller ownerSeller = new Seller(UUID.randomUUID(), ownerUser, "OwnerStore", "owner@seller.com", SellerStatus.ACTIVE);
+
+        UUID productId = UUID.randomUUID();
+        Product product = new Product(productId, ownerSeller, null, "Inactive Product", "Desc", BigDecimal.valueOf(50), "USD");
+        product.setActive(false);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenAnswer(i -> i.getArgument(0));
+
+        ProductResponse response = catalogService.activateProduct(productId, ownerUserId, false);
+
+        assertThat(response.active()).isTrue();
+        assertThat(product.isActive()).isTrue();
+        verify(productRepository).save(product);
+    }
+
+    @Test
+    @DisplayName("Should prevent unauthorized seller from activating someone else's product")
+    void shouldPreventUnauthorizedProductActivation() {
+        UUID ownerUserId = UUID.randomUUID();
+        User ownerUser = new User(ownerUserId, "owner@seller.com", "hash", "Owner", Role.SELLER);
+        Seller ownerSeller = new Seller(UUID.randomUUID(), ownerUser, "OwnerStore", "owner@seller.com", SellerStatus.ACTIVE);
+
+        UUID productId = UUID.randomUUID();
+        Product product = new Product(productId, ownerSeller, null, "Title", "Desc", BigDecimal.valueOf(50), "USD");
+        product.setActive(false);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+        UUID rogueUserId = UUID.randomUUID();
+        assertThatThrownBy(() -> catalogService.activateProduct(productId, rogueUserId, false))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessageContaining("You are not authorized to modify another seller's product");
+    }
+
+    @Test
+    @DisplayName("Should update and deactivate category by administrator")
+    void shouldUpdateAndDeactivateCategory() {
+        UUID categoryId = UUID.randomUUID();
+        Category category = new Category(categoryId, "Electronics", "electronics", "Old description", null);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(Category.class))).thenAnswer(i -> i.getArgument(0));
+
+        CategoryRequest updateRequest = new CategoryRequest("Updated Electronics", "New description", null);
+        CategoryResponse response = catalogService.updateCategory(categoryId, updateRequest);
+
+        assertThat(response.name()).isEqualTo("Updated Electronics");
+        assertThat(response.description()).isEqualTo("New description");
+
+        catalogService.deactivateCategory(categoryId);
+        assertThat(category.isActive()).isFalse();
+        verify(categoryRepository, times(2)).save(category);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +25,28 @@ public class ReturnsController {
 
     public ReturnsController(ReturnsAndRefundsService service) {
         this.service = service;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
+    @Operation(summary = "Customer: View all return requests submitted by current customer")
+    public ResponseEntity<List<ReturnResponse>> getCustomerReturns(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(service.getCustomerReturns(user));
+    }
+
+    @GetMapping("/seller")
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @Operation(summary = "Seller: View all return requests assigned to seller's store")
+    public ResponseEntity<List<ReturnResponse>> getSellerReturns(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(service.getSellerReturns(user));
+    }
+
+    @GetMapping("/orders/{orderId}")
+    @Operation(summary = "View return requests for a specific order (requires ownership)")
+    public ResponseEntity<List<ReturnResponse>> getOrderReturns(
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(service.getOrderReturns(orderId, user));
     }
 
     @PostMapping

@@ -167,4 +167,17 @@ class ReturnsAndRefundsServiceTest {
         assertThat(response.providerRefundId()).isEqualTo("REFUND-EXT-1");
         verify(outboxService).publishEvent(eq("REFUND_COMPLETED"), eq("Refund"), any(), any());
     }
+
+    @Test
+    @DisplayName("Should retrieve returns submitted by customer and store-level returns for seller")
+    void shouldRetrieveCustomerAndSellerReturns() {
+        ReturnRequest ret = new ReturnRequest(UUID.randomUUID(), deliveredOrder, customer, seller, "Damaged item");
+
+        when(returnRepository.findByCustomerId(customer.getId())).thenReturn(List.of(ret));
+        when(sellerRepository.findByUserId(sellerUser.getId())).thenReturn(Optional.of(seller));
+        when(returnRepository.findBySellerId(seller.getId())).thenReturn(List.of(ret));
+
+        assertThat(service.getCustomerReturns(customer)).hasSize(1);
+        assertThat(service.getSellerReturns(sellerUser)).hasSize(1);
+    }
 }

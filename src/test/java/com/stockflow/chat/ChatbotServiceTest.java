@@ -117,7 +117,7 @@ class ChatbotServiceTest {
         Product product = new Product(UUID.randomUUID(), seller, cat, "Wireless Noise-Cancelling Headphones", "Pro audio", new BigDecimal("199.99"), "USD");
         Inventory inv = new Inventory(UUID.randomUUID(), "SKU-AUDIO-1", product, seller, 20);
 
-        when(productRepository.searchPublicCatalog(any(), any(), any())).thenReturn(new PageImpl<>(List.of(product)));
+        when(productRepository.searchPublicCatalog(any(), any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of(product)));
         when(inventoryRepository.findByProductId(product.getId())).thenReturn(Optional.of(inv));
 
         ChatMessageRequest request = new ChatMessageRequest("Show me headphones", "sess-123", null);

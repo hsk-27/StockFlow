@@ -22,16 +22,16 @@ public class OutboxPollerWorker {
 
     private final OutboxEventRepository outboxEventRepository;
     private final List<DomainEventListener> eventListeners;
-    private final StockFlowMetrics metrics;
+    private final OutboxEventDispatcher eventDispatcher;
     private final int batchSize;
 
     public OutboxPollerWorker(OutboxEventRepository outboxEventRepository,
                               List<DomainEventListener> eventListeners,
-                              StockFlowMetrics metrics,
+                              OutboxEventDispatcher eventDispatcher,
                               @Value("${stockflow.outbox.batch-size:50}") int batchSize) {
         this.outboxEventRepository = outboxEventRepository;
         this.eventListeners = eventListeners;
-        this.metrics = metrics;
+        this.eventDispatcher = eventDispatcher;
         this.batchSize = batchSize;
     }
 
@@ -59,7 +59,6 @@ public class OutboxPollerWorker {
      *   4. Dispatches events with exponential backoff retries (At-Least-Once Delivery).
      */
     @Scheduled(cron = "${stockflow.outbox.worker-cron:*/10 * * * * *}")
-    @Transactional
     public void processOutboxBatch() {
         Instant now = Instant.now();
         List<OutboxEvent> events;
@@ -72,29 +71,13 @@ public class OutboxPollerWorker {
             events = outboxEventRepository.findPendingEventsFallback(now, PageRequest.of(0, batchSize));
         }
 
-        if (events.isEmpty()) {
+        if (events == null || events.isEmpty()) {
             return;
         }
 
-        log.info("Processing {} outbox events", events.size());
+        log.info("Processing {} outbox events with per-event transaction isolation", events.size());
         for (OutboxEvent event : events) {
-            try {
-                // Dispatch to registered event listeners
-                for (DomainEventListener listener : eventListeners) {
-                    if (listener.canHandle(event.getEventType())) {
-                        listener.onEvent(event);
-                    }
-                }
-                event.markProcessed();
-                outboxEventRepository.save(event);
-                metrics.incrementOutboxProcessed();
-            } catch (Exception ex) {
-                log.error("Failed to process outbox event id: {}", event.getId(), ex);
-                int backoffSeconds = (int) Math.pow(2, event.getAttemptCount()) * 5;
-                event.recordFailure(ex.getMessage(), Instant.now().plusSeconds(backoffSeconds));
-                outboxEventRepository.save(event);
-                metrics.incrementOutboxFailed();
-            }
+            eventDispatcher.dispatch(event, eventListeners);
         }
     }
 }

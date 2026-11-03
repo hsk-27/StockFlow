@@ -1,5 +1,6 @@
 package com.stockflow.identity.service;
 
+import com.stockflow.audit.service.AuditService;
 import com.stockflow.common.exception.ConflictException;
 import com.stockflow.common.exception.ResourceNotFoundException;
 import com.stockflow.common.exception.UnauthorizedException;
@@ -32,15 +33,18 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuditService auditService;
 
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtService jwtService) {
+                       JwtService jwtService,
+                       AuditService auditService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -65,6 +69,15 @@ public class AuthService {
         );
         user = userRepository.save(user);
 
+        auditService.recordAction(
+                user.getId(),
+                "USER_REGISTERED",
+                "User",
+                user.getId().toString(),
+                "User registered with role: " + user.getRole(),
+                null
+        );
+
         log.info("Registered new user with id: {} and role: {}", user.getId(), user.getRole());
         return createAuthResponse(user);
     }
@@ -83,6 +96,15 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
+        auditService.recordAction(
+                user.getId(),
+                "LOGIN_SUCCESS",
+                "User",
+                user.getId().toString(),
+                "User logged in successfully",
+                null
+        );
+
         log.info("Successful login for user: {}", user.getEmail());
         return createAuthResponse(user);
     }
@@ -100,6 +122,16 @@ public class AuthService {
         if (storedToken.isRevoked()) {
             log.warn("Detected reuse of revoked refresh token for user {}. Invalidating all user sessions.", user.getEmail());
             refreshTokenRepository.deleteByUserId(user.getId());
+
+            auditService.recordAction(
+                    user.getId(),
+                    "SECURITY_ALERT_TOKEN_REUSE",
+                    "RefreshToken",
+                    storedToken.getId().toString(),
+                    "Security alert: attempted reuse of revoked refresh token for user: " + user.getEmail(),
+                    null
+            );
+
             throw new UnauthorizedException("Security violation: Token reuse detected");
         }
 
@@ -123,6 +155,16 @@ public class AuthService {
             refreshTokenRepository.findByTokenHash(tokenHash).ifPresent(token -> {
                 token.revoke();
                 refreshTokenRepository.save(token);
+
+                auditService.recordAction(
+                        token.getUser().getId(),
+                        "LOGOUT",
+                        "RefreshToken",
+                        token.getId().toString(),
+                        "User logged out and refresh token revoked",
+                        null
+                );
+
                 log.info("Revoked refresh token on logout for user: {}", token.getUser().getEmail());
             });
         }

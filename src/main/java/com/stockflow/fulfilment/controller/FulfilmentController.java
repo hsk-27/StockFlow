@@ -47,8 +47,17 @@ public class FulfilmentController {
     }
 
     @GetMapping("/orders/{orderId}/shipments")
-    @Operation(summary = "Get all shipments and tracking numbers for an order")
-    public ResponseEntity<List<ShipmentResponse>> getOrderShipments(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(fulfilmentService.getShipmentsForOrder(orderId));
+    @Operation(summary = "Get all shipments and tracking numbers for an order (enforces ownership)")
+    public ResponseEntity<List<ShipmentResponse>> getOrderShipments(
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(fulfilmentService.getShipmentsForOrder(orderId, user));
+    }
+
+    @GetMapping("/seller")
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @Operation(summary = "Seller: Get all shipments dispatched by current seller")
+    public ResponseEntity<List<ShipmentResponse>> getSellerShipments(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(fulfilmentService.getSellerShipments(user));
     }
 }

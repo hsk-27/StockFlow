@@ -57,4 +57,13 @@ public class SellerProductController {
         catalogService.deactivateProduct(id, user.getId(), isAdmin);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/activate")
+    @Operation(summary = "Seller: Activate a deactivated product listing (requires ownership)")
+    public ResponseEntity<ProductResponse> activateProduct(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User user) {
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        return ResponseEntity.ok(catalogService.activateProduct(id, user.getId(), isAdmin));
+    }
 }

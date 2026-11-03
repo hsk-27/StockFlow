@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -151,6 +152,21 @@ public class CatalogService {
         log.info("Deactivated product: {}", productId);
     }
 
+    @Transactional
+    public ProductResponse activateProduct(UUID productId, UUID requestingUserId, boolean isAdmin) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + productId));
+
+        if (!isAdmin && !product.getSeller().getUser().getId().equals(requestingUserId)) {
+            throw new UnauthorizedException("You are not authorized to modify another seller's product");
+        }
+
+        product.setActive(true);
+        productRepository.save(product);
+        log.info("Activated product: {}", productId);
+        return ProductResponse.from(product);
+    }
+
     @Transactional(readOnly = true)
     public ProductResponse getProductById(UUID productId) {
         Product product = productRepository.findByIdAndActiveTrue(productId)
@@ -159,8 +175,8 @@ public class CatalogService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductResponse> searchCatalog(UUID categoryId, String query, Pageable pageable) {
-        return productRepository.searchPublicCatalog(categoryId, query, pageable)
+    public Page<ProductResponse> searchCatalog(UUID categoryId, BigDecimal minPrice, BigDecimal maxPrice, String query, Pageable pageable) {
+        return productRepository.searchPublicCatalog(categoryId, minPrice, maxPrice, query, pageable)
                 .map(ProductResponse::from);
     }
 
@@ -186,6 +202,33 @@ public class CatalogService {
                 parent
         );
         return CategoryResponse.from(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public CategoryResponse updateCategory(UUID categoryId, CategoryRequest request) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + categoryId));
+
+        Category parent = null;
+        if (request.parentId() != null) {
+            if (request.parentId().equals(categoryId)) {
+                throw new ConflictException("A category cannot be its own parent");
+            }
+            parent = categoryRepository.findById(request.parentId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent category not found: " + request.parentId()));
+        }
+
+        category.update(request.name().trim(), request.description(), parent);
+        return CategoryResponse.from(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public void deactivateCategory(UUID categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + categoryId));
+        category.setActive(false);
+        categoryRepository.save(category);
+        log.info("Deactivated category: {}", categoryId);
     }
 
     @Transactional(readOnly = true)
