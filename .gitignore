@@ -31,6 +31,24 @@ build/
 ### VS Code ###
 .vscode/
 
-### Log and temp files ###
+### Secrets and Environment ###
+.env
+.env.local
+.env.*.local
+!.env.example
+
+### OS Generated ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### Log, dump and temp files ###
 *.log
 *.tmp
+*.hprof
+hs_err_pid*
+replay_pid*

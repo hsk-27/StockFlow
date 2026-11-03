@@ -6,8 +6,13 @@ on:
   pull_request:
     branches: [ main, master ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
+    name: Build & Verify (Java 21, PostgreSQL 16)
     runs-on: ubuntu-latest
 
     services:
@@ -36,9 +41,23 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B clean verify
+      - name: Make Maven Wrapper Executable
+        run: chmod +x ./mvnw
+
+      - name: Run Build & Verification Suite
+        run: ./mvnw -B clean verify
         env:
           DB_URL: jdbc:postgresql://localhost:5432/stockflow_test
           DB_USERNAME: stockflow_user
           DB_PASSWORD: stockflow_password
+
+      - name: Verify Docker Multi-Stage Build
+        run: docker build -t stockflow-backend:${{ github.sha }} .
+
+      - name: Upload Test Report Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-test-reports
+          path: target/surefire-reports/
+          if-no-files-found: ignore

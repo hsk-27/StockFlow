@@ -252,14 +252,28 @@ Verify health:
 curl http://localhost:8080/actuator/health
 ```
 
-### 7.2 Run Locally via Maven
+### 7.2 Run Locally via Maven Wrapper
 ```bash
-# 1. Start PostgreSQL (e.g. via Docker or local service)
-# 2. Run application
-mvn clean spring-boot:run
+# 1. Start PostgreSQL (e.g. via Docker Compose or local service)
+docker compose up -d postgres
+
+# 2. Copy environment template
+cp .env.example .env
+
+# 3. Run automated tests
+./mvnw clean verify    # Windows: .\mvnw.cmd clean verify
+
+# 4. Start application
+./mvnw spring-boot:run # Windows: .\mvnw.cmd spring-boot:run
 ```
 
-### 7.3 Seed Data Credentials
+### 7.3 GitHub Deployment & CI/CD Pipeline
+The repository is fully configured for continuous integration and automated container deployment via GitHub Actions:
+- **Continuous Integration (`.github/workflows/ci.yml`)**: Automatically triggers on pushes and PRs to `main`/`master`. Sets up Java 21, launches a PostgreSQL 16 service container, runs `./mvnw clean verify`, tests multi-stage Docker image compilation, and archives test reports.
+- **Container Publishing (`.github/workflows/deploy.yml`)**: Automatically packages and publishes multi-platform Docker container images to GitHub Container Registry (`ghcr.io`) upon tag releases (`v*.*.*`).
+- **Environment Management (`.env.example`)**: Production and staging deployments can configure secrets, Hikari connection pool limits, CORS origin patterns, and background worker cron frequencies without modifying code.
+
+### 7.4 Seed Data Credentials
 | Role | Email | Password |
 |---|---|---|
 | **ADMIN** | `admin@stockflow.com` | `Password123!` |
