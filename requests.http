@@ -228,3 +228,99 @@ Authorization: Bearer {{adminToken}}
 ### Security & Financial Audit Logs
 GET {{baseUrl}}/admin/reports/audit-logs?page=0&size=20
 Authorization: Bearer {{adminToken}}
+
+### -----------------------------------------------------------------------
+### 9. CONVERSATIONAL AI CHATBOT (ALL USER PERSONAS)
+### -----------------------------------------------------------------------
+
+### 9.1 Guest: Search Products & Discover Catalog
+POST {{baseUrl}}/chat/message
+Content-Type: application/json
+
+{
+  "message": "Show available products in the catalog",
+  "sessionId": "guest-session-101"
+}
+
+### 9.2 Guest: Inquire about Return & Refund Policies
+POST {{baseUrl}}/chat/message
+Content-Type: application/json
+
+{
+  "message": "What is the return and refund policy?",
+  "sessionId": "guest-session-101"
+}
+
+### 9.3 Customer: Check Recent Orders (Context-Aware)
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "message": "Show my recent orders and tracking status",
+  "sessionId": "customer-session-201"
+}
+
+### 9.4 Customer: Check Active Cart Items
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "message": "What items are in my cart right now?",
+  "sessionId": "customer-session-201"
+}
+
+### 9.5 Customer: Ask if Order is Eligible for Cancellation
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "message": "Can I cancel my pending order?",
+  "sessionId": "customer-session-201"
+}
+
+### 9.6 Seller: Low Stock & Restock Alert
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "message": "Show my low stock items and inventory alerts",
+  "sessionId": "seller-session-301"
+}
+
+### 9.7 Seller: Check Store Listings & Customer Returns
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{sellerToken}}
+Content-Type: application/json
+
+{
+  "message": "Any pending return requests for my store?",
+  "sessionId": "seller-session-301"
+}
+
+### 9.8 Admin: Query Platform Revenue & Operational Health
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "message": "Show platform operational metrics and total revenue",
+  "sessionId": "admin-session-401"
+}
+
+### 9.9 Admin: Inspect Outbox Queue & Background Telemetry
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "message": "Check outbox queue status and background workers",
+  "sessionId": "admin-session-401"
+}
+
+### 9.10 List User's Past Chat Conversations
+GET {{baseUrl}}/chat/conversations
+Authorization: Bearer {{customerToken}}

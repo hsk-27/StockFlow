@@ -5,7 +5,7 @@
 [![Spring Boot 3.3.5](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Automated Tests](https://img.shields.io/badge/tests-42%2F42%20passing-brightgreen.svg)]()
+[![Automated Tests](https://img.shields.io/badge/tests-54%2F54%20passing-brightgreen.svg)]()
 [![Code Quality](https://img.shields.io/badge/quality-production--grade-blue.svg)]()
 
 > **Project Abstract:** StockFlow is an enterprise-grade multi-vendor commerce, inventory, order orchestration, payment, and fulfilment backend engineered as a modular monolith in **Java 21** and **Spring Boot 3.3.5**, backed by **PostgreSQL 16** as the authoritative single source of truth. Designed and defended as an undergraduate Computer Science capstone project, it models and solves the most notorious distributed consistency challenges in modern commerce without relying on superficial CRUD simplifications.
@@ -229,6 +229,16 @@ Flyway manages migrations under `src/main/resources/db/migration/`:
 ### 6.7 Admin & Reporting (`/api/v1/admin/reports`)
 - `GET /api/v1/admin/reports/metrics`: Operational metrics (revenue, status breakdown, stock alerts).
 - `GET /api/v1/admin/reports/audit-logs`: Inspect administrative and financial audit records.
+
+### 6.8 Conversational AI Chatbot (`/api/v1/chat`)
+- `POST /api/v1/chat/message`: Context-aware conversational endpoint for **all user personas**:
+  - **Guest:** Product search, categories, store policies, how to register.
+  - **Customer:** Real-time order lookup, carrier tracking, cancellation eligibility, and cart inspections with strict BOLA isolation.
+  - **Seller:** Inventory health, low-stock threshold alerts, pending return requests, and store listing oversight.
+  - **Admin:** Real-time platform revenue metrics, executive audit trail inspection, and transactional outbox queue telemetry.
+- `GET /api/v1/chat/conversations`: List past conversation sessions for session ID or authenticated user.
+- `GET /api/v1/chat/conversations/{id}`: Retrieve message history for a conversation.
+- `DELETE /api/v1/chat/conversations/{id}`: Delete a conversation thread.
 
 ---
 

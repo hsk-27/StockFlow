@@ -136,6 +136,72 @@
             border-bottom: 1px solid var(--border);
         }
         .table-creds th { color: var(--muted); font-weight: 600; }
+        .persona-btn {
+            background: #1e293b;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .persona-btn:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+        .persona-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+        .prompt-pill, .action-pill {
+            background: #1e293b;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.65rem;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        .prompt-pill:hover, .action-pill:hover {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+        }
+        .chat-msg {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .chat-msg.user {
+            align-self: flex-end;
+            background: rgba(129, 140, 248, 0.15);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            border-bottom-right-radius: 2px;
+        }
+        .chat-msg.assistant {
+            align-self: flex-start;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 2px;
+        }
+        .msg-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.4rem;
+        }
+        .msg-time {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
         footer {
             margin-top: 3rem;
             border-top: 1px solid var(--border);
@@ -194,6 +260,50 @@
             </div>
         </div>
 
+        <!-- Interactive Conversational Chatbot -->
+        <div class="card" style="margin-bottom: 2rem; border-color: var(--accent);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2>🤖 Conversational AI Assistant (All User Personas)</h2>
+                <button id="clearChatBtn" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.3rem 0.7rem;">Clear Chat</button>
+            </div>
+            <p style="margin-bottom: 1rem;">Experience our end-to-end multi-persona chatbot. Switch personas to test role-specific responses with automated token injection &amp; BOLA enforcement:</p>
+            
+            <!-- Persona Switcher -->
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button class="persona-btn active" data-role="GUEST">🌐 Guest (Public)</button>
+                <button class="persona-btn" data-role="CUSTOMER" data-email="customer@stockflow.com">👤 Customer (Alice)</button>
+                <button class="persona-btn" data-role="SELLER" data-email="seller@stockflow.com">🏪 Seller (Tech Haven)</button>
+                <button class="persona-btn" data-role="ADMIN" data-email="admin@stockflow.com">🛡️ Admin (System Exec)</button>
+            </div>
+
+            <!-- Active Status Badge -->
+            <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>Active Persona:</span>
+                <span id="activePersonaBadge" class="badge" style="background: rgba(56, 189, 248, 0.2); color: var(--primary);">GUEST (Unauthenticated)</span>
+                <span id="authStatusText" style="font-size: 0.8rem; color: var(--muted);">No token attached</span>
+            </div>
+
+            <!-- Quick Prompt Pills -->
+            <div style="margin-bottom: 1rem;">
+                <div style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">Suggested Prompts:</div>
+                <div id="quickPromptContainer" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+            </div>
+
+            <!-- Chat Stream Box -->
+            <div id="chatStream" style="height: 380px; overflow-y: auto; background: #090d16; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="chat-msg assistant">
+                    <div class="msg-header"><span class="badge" style="font-size: 0.7rem;">ASSISTANT</span> <span class="msg-time">System Ready</span></div>
+                    <div class="msg-body">👋 Hello! I am your <strong>StockFlow Assistant</strong>. Select a persona above or ask me about our <strong>products, categories, order tracking, seller inventory, or platform metrics</strong>!</div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="chatForm" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="chatInput" placeholder="Ask anything (e.g., 'Show available products', 'Where is my order', 'Check low stock')..." style="flex: 1; background: #090d16; border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.9rem; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none;" required />
+                <button type="submit" class="btn" style="cursor: pointer;">Send</button>
+            </form>
+        </div>
+
         <div class="card" style="margin-bottom: 2rem;">
             <h2>🚀 Quick Test Execution (cURL / HTTP Client)</h2>
             <p>You can execute all workflows directly via the bundled <code>requests.http</code> file in VS Code or IntelliJ, or login via terminal:</p>
@@ -203,9 +313,231 @@
         </div>
 
         <footer>
-            <div>StockFlow &bull; Senior Engineering Portfolio &bull; 42 Automated Tests Passed (100%)</div>
-            <div>PostgreSQL 16 &bull; Flyway Migrations</div>
+            <div>StockFlow &bull; Senior Engineering Portfolio &bull; 54 Automated Tests Passed (100%)</div>
+            <div>PostgreSQL 16 &bull; Flyway Migrations &bull; Conversational AI</div>
         </footer>
     </div>
+
+    <script>
+        // Chatbot Client State
+        let currentRole = 'GUEST';
+        let currentToken = null;
+        let sessionId = 'session-' + Math.random().toString(36).substring(2, 10);
+        let currentConversationId = null;
+
+        const promptsByRole = {
+            'GUEST': [
+                "Show available products",
+                "What categories are available?",
+                "What is the return policy?",
+                "What is the shipping policy?",
+                "Show demo seed logins"
+            ],
+            'CUSTOMER': [
+                "Show my recent orders",
+                "What is in my cart?",
+                "Where is order ORD-20261028-0001?",
+                "Can I cancel my pending order?",
+                "What is my return request status?"
+            ],
+            'SELLER': [
+                "Show my low stock items",
+                "Check my inventory levels",
+                "Show my store listings",
+                "Show recent shipments for my store",
+                "Any pending return requests?"
+            ],
+            'ADMIN': [
+                "Show platform metrics & revenue",
+                "Inspect recent audit logs",
+                "Check outbox queue status",
+                "Show user distribution",
+                "System health overview"
+            ]
+        };
+
+        const chatStream = document.getElementById('chatStream');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const personaBtns = document.querySelectorAll('.persona-btn');
+        const activePersonaBadge = document.getElementById('activePersonaBadge');
+        const authStatusText = document.getElementById('authStatusText');
+        const quickPromptContainer = document.getElementById('quickPromptContainer');
+        const clearChatBtn = document.getElementById('clearChatBtn');
+
+        function updatePrompts() {
+            quickPromptContainer.innerHTML = '';
+            const prompts = promptsByRole[currentRole] || [];
+            prompts.forEach(p => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'prompt-pill';
+                btn.textContent = p;
+                btn.onclick = () => {
+                    chatInput.value = p;
+                    submitMessage(p);
+                };
+                quickPromptContainer.appendChild(btn);
+            });
+        }
+
+        async function switchPersona(role, email) {
+            currentRole = role;
+            personaBtns.forEach(b => b.classList.toggle('active', b.dataset.role === role));
+            
+            if (role === 'GUEST') {
+                currentToken = null;
+                activePersonaBadge.textContent = 'GUEST (Unauthenticated)';
+                activePersonaBadge.style.background = 'rgba(56, 189, 248, 0.2)';
+                activePersonaBadge.style.color = 'var(--primary)';
+                authStatusText.textContent = 'Public browsing mode';
+                updatePrompts();
+                appendAssistantMessage("Switched to **Guest Mode**. You can browse public catalog items, FAQs, and platform policies.", "SWITCH_MODE", []);
+                return;
+            }
+
+            // Authenticate persona
+            try {
+                authStatusText.textContent = `Authenticating as ${email}...`;
+                const res = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: 'Password123!' })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentToken = data.accessToken;
+                    activePersonaBadge.textContent = `${role} (${email})`;
+                    activePersonaBadge.style.background = 'rgba(52, 211, 153, 0.2)';
+                    activePersonaBadge.style.color = 'var(--success)';
+                    authStatusText.textContent = 'JWT Token Active (Expires in 15m)';
+                    updatePrompts();
+                    appendAssistantMessage(`✅ Authenticated successfully as **${role}** (\`${email}\`). You now have full access to your role-specific records and actions!`, "SWITCH_MODE", []);
+                } else {
+                    throw new Error('Authentication failed');
+                }
+            } catch (err) {
+                authStatusText.textContent = 'Login failed - reverting to Guest';
+                currentToken = null;
+                currentRole = 'GUEST';
+                updatePrompts();
+            }
+        }
+
+        personaBtns.forEach(btn => {
+            btn.onclick = () => switchPersona(btn.dataset.role, btn.dataset.email);
+        });
+
+        function appendUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg user';
+            div.innerHTML = `<div class="msg-header"><span class="badge" style="background: rgba(129, 140, 248, 0.2); color: var(--accent); font-size: 0.7rem;">YOU (${currentRole})</span></div><div class="msg-body">${escapeHtml(text)}</div>`;
+            chatStream.appendChild(div);
+            chatStream.scrollTop = chatStream.scrollHeight;
+        }
+
+        function appendAssistantMessage(content, intent, actions) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg assistant';
+            
+            let actionsHtml = '';
+            if (actions && actions.length > 0) {
+                actionsHtml = '<div style="margin-top: 0.6rem; display: flex; gap: 0.4rem; flex-wrap: wrap;">' +
+                    actions.map(a => `<button type="button" class="action-pill" data-payload="${escapeHtml(a.payload)}">${escapeHtml(a.label)}</button>`).join('') +
+                    '</div>';
+            }
+
+            const intentBadge = intent ? `<span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--primary); font-size: 0.65rem;">[${escapeHtml(intent)}]</span>` : '';
+
+            div.innerHTML = `
+                <div class="msg-header">
+                    <span class="badge" style="font-size: 0.7rem;">ASSISTANT</span>
+                    ${intentBadge}
+                </div>
+                <div class="msg-body">${formatMarkdown(content)}</div>
+                ${actionsHtml}
+            `;
+            chatStream.appendChild(div);
+            
+            // Attach action pill clicks
+            div.querySelectorAll('.action-pill').forEach(btn => {
+                btn.onclick = () => {
+                    const query = btn.dataset.payload;
+                    chatInput.value = query;
+                    submitMessage(query);
+                };
+            });
+
+            chatStream.scrollTop = chatStream.scrollHeight;
+        }
+
+        async function submitMessage(text) {
+            if (!text || !text.trim()) return;
+            const message = text.trim();
+            appendUserMessage(message);
+            chatInput.value = '';
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (currentToken) {
+                headers['Authorization'] = 'Bearer ' + currentToken;
+            }
+
+            try {
+                const res = await fetch('/api/v1/chat/message', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: sessionId,
+                        conversationId: currentConversationId
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentConversationId = data.conversationId;
+                    appendAssistantMessage(data.content, data.intent, data.suggestedActions);
+                } else {
+                    const err = await res.json();
+                    appendAssistantMessage(`❌ **Error (${res.status}):** ${err.detail || 'Failed to process message.'}`, "ERROR", []);
+                }
+            } catch (e) {
+                appendAssistantMessage("⚠️ **Network Error:** Could not contact server. Please verify backend is running.", "NETWORK_ERROR", []);
+            }
+        }
+
+        chatForm.onsubmit = (e) => {
+            e.preventDefault();
+            submitMessage(chatInput.value);
+        };
+
+        clearChatBtn.onclick = () => {
+            chatStream.innerHTML = '';
+            sessionId = 'session-' + Math.random().toString(36).substring(2, 10);
+            currentConversationId = null;
+            appendAssistantMessage("🧹 Conversation cleared. Start a new session anytime!", "CLEARED", []);
+        };
+
+        function escapeHtml(text) {
+            return String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
+        function formatMarkdown(text) {
+            let escaped = escapeHtml(text);
+            // Bold
+            escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italics
+            escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Inline code
+            escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Line breaks
+            escaped = escaped.replace(/\n/g, '<br>');
+            return escaped;
+        }
+
+        // Initialize prompts on load
+        updatePrompts();
+    </script>
 </body>
 </html>
