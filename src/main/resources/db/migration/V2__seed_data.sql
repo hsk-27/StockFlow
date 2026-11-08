@@ -5,9 +5,9 @@
 -- (BCrypt hashes for 'Password123!')
 
 INSERT INTO users (id, email, password_hash, full_name, role, enabled, created_at, updated_at) VALUES
-('a0000000-0000-0000-0000-000000000001', 'admin@stockflow.com', '$2a$10$7EqJtq98hPqEX7fNZaFWoO9v916a6Kov76QpW84d3.3j16f3d53m6', 'System Administrator', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('a0000000-0000-0000-0000-000000000002', 'seller@stockflow.com', '$2a$10$7EqJtq98hPqEX7fNZaFWoO9v916a6Kov76QpW84d3.3j16f3d53m6', 'Apex Retail Store', 'SELLER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('a0000000-0000-0000-0000-000000000003', 'customer@stockflow.com', '$2a$10$7EqJtq98hPqEX7fNZaFWoO9v916a6Kov76QpW84d3.3j16f3d53m6', 'Jane Customer', 'CUSTOMER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('a0000000-0000-0000-0000-000000000001', 'admin@stockflow.com', '$2a$10$ovTsXhD/UIoxSe9dXy2UhO2VE2Iz.e6A7u/fyWQ31T8clwgT3i/UG', 'System Administrator', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('a0000000-0000-0000-0000-000000000002', 'seller@stockflow.com', '$2a$10$ovTsXhD/UIoxSe9dXy2UhO2VE2Iz.e6A7u/fyWQ31T8clwgT3i/UG', 'Apex Retail Store', 'SELLER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('a0000000-0000-0000-0000-000000000003', 'customer@stockflow.com', '$2a$10$ovTsXhD/UIoxSe9dXy2UhO2VE2Iz.e6A7u/fyWQ31T8clwgT3i/UG', 'Jane Customer', 'CUSTOMER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO sellers (id, user_id, store_name, business_email, status, created_at, updated_at) VALUES
 ('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'Apex Electronics', 'seller@stockflow.com', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

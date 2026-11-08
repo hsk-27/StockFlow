@@ -24,7 +24,9 @@ import com.stockflow.payment.repository.PaymentWebhookEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.util.List;
@@ -43,6 +45,7 @@ public class PaymentService {
     private final OutboxService outboxService;
     private final PaymentProvider paymentProvider;
     private final ObjectMapper objectMapper;
+    private final TransactionTemplate transactionTemplate;
 
     public PaymentService(PaymentRepository paymentRepository,
                           PaymentWebhookEventRepository webhookEventRepository,
@@ -51,6 +54,18 @@ public class PaymentService {
                           OutboxService outboxService,
                           PaymentProvider paymentProvider,
                           ObjectMapper objectMapper) {
+        this(paymentRepository, webhookEventRepository, orderRepository, inventoryService, outboxService, paymentProvider, objectMapper, null);
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public PaymentService(PaymentRepository paymentRepository,
+                          PaymentWebhookEventRepository webhookEventRepository,
+                          OrderRepository orderRepository,
+                          InventoryService inventoryService,
+                          OutboxService outboxService,
+                          PaymentProvider paymentProvider,
+                          ObjectMapper objectMapper,
+                          PlatformTransactionManager transactionManager) {
         this.paymentRepository = paymentRepository;
         this.webhookEventRepository = webhookEventRepository;
         this.orderRepository = orderRepository;
@@ -58,6 +73,7 @@ public class PaymentService {
         this.outboxService = outboxService;
         this.paymentProvider = paymentProvider;
         this.objectMapper = objectMapper;
+        this.transactionTemplate = transactionManager != null ? new TransactionTemplate(transactionManager) : null;
     }
 
     /**
@@ -88,8 +104,10 @@ public class PaymentService {
      *           or UNCERTAIN (reconciled by PaymentReconciliationWorker).
      */
     public PaymentResponse initiatePayment(UUID orderId, User customer) {
-        // Step 1: Initialize payment record
-        Payment payment = initializePaymentRecord(orderId, customer);
+        // Step 1: Initialize payment record in short transaction
+        Payment payment = transactionTemplate != null
+                ? transactionTemplate.execute(status -> initializePaymentRecord(orderId, customer))
+                : initializePaymentRecord(orderId, customer);
 
         // Step 2: Call gateway OUTSIDE open database transaction
         PaymentRequest paymentRequest = new PaymentRequest(
@@ -101,16 +119,19 @@ public class PaymentService {
                 payment.getId().toString()
         );
 
-        PaymentResult result;
+        PaymentResult res;
         try {
-            result = paymentProvider.initiatePayment(paymentRequest);
+            res = paymentProvider.initiatePayment(paymentRequest);
         } catch (Exception e) {
             log.error("Network timeout or gateway error during payment initiation for order {}", orderId, e);
-            result = PaymentResult.uncertain(null, "Gateway communication failure: " + e.getMessage());
+            res = PaymentResult.uncertain(null, "Gateway communication failure: " + e.getMessage());
         }
+        final PaymentResult result = res;
 
-        // Step 3: Persist and reconcile outcome
-        return processPaymentOutcome(payment.getId(), result);
+        // Step 3: Persist and reconcile outcome in short transaction
+        return transactionTemplate != null
+                ? transactionTemplate.execute(status -> processPaymentOutcome(payment.getId(), result))
+                : processPaymentOutcome(payment.getId(), result);
     }
 
     @Transactional

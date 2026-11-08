@@ -5,7 +5,7 @@
 [![Spring Boot 3.3.5](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Automated Tests](https://img.shields.io/badge/tests-63%2F63%20passing-brightgreen.svg)]()
+[![Automated Tests](https://img.shields.io/badge/tests-68%2F68%20passing-brightgreen.svg)]()
 [![Code Quality](https://img.shields.io/badge/quality-production--grade-blue.svg)]()
 
 > **Project Abstract:** StockFlow is an enterprise-grade multi-vendor commerce, inventory, order orchestration, payment, and fulfilment backend engineered as a modular monolith in **Java 21** and **Spring Boot 3.3.5**, backed by **PostgreSQL 16** as the authoritative single source of truth. Designed and defended as an undergraduate Computer Science capstone project, it models and solves the most notorious distributed consistency challenges in modern commerce without relying on superficial CRUD simplifications.
@@ -294,7 +294,11 @@ The repository is fully configured for continuous integration and automated cont
 
 ## 8. Verification & Concurrency Test Results
 
-The project test suite validates 42 automated test cases covering domain invariants, concurrency, idempotency, horizontal/vertical privilege escalation, and full lifecycle commerce workflows.
+The project test suite validates **68 automated test cases across 20 test classes** covering domain invariants, concurrency, idempotency, horizontal/vertical privilege escalation, conversational NLP chatbot assistance, and full lifecycle commerce workflows:
+- **FullCommerceIntegrationTest**: Live Spring Boot @SpringBootTest verifying application context loading, Flyway schema validation (V1, V2, V3), Actuator /actuator/health reporting, authentic BCrypt authentication, catalog browsing, cart operations, atomic checkout with idempotency deduplication replay, and multi-turn chatbot inquiries.
+- **ConcurrentCheckoutIntegrationTest & HighConcurrencyLoadTest**: Validates 50+ concurrent purchase attempts against the last available unit with zero overselling.
+- **SecurityAccessControlIntegrationTest**: Validates role-based authorization, broken object-level authorization (BOLA) defenses, and access token validation.
+- **EndToEndCommerceWorkflowTest**: Comprehensive lifecycle testing traversing registration -> cart -> checkout -> payment -> fulfilment -> delivery -> return approval -> restock decision -> refund.
 
 ### 8.1 Concurrent Last-Unit Purchase Demonstration
 - **Scenario:** Initial inventory for `SKU-HOT-ITEM-001` has exactly **1 unit** on hand (`on_hand = 1, reserved = 0, available = 1`).

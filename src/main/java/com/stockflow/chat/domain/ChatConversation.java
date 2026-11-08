@@ -34,7 +34,7 @@ public class ChatConversation {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY)
     @OrderBy("createdAt ASC")
     private List<ChatMessage> messages = new ArrayList<>();
 

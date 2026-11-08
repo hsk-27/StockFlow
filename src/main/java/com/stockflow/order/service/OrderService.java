@@ -73,6 +73,7 @@ public class OrderService {
     /**
      * Executes idempotent checkout orchestration.
      */
+    @Transactional
     public OrderResponse checkout(CheckoutRequest request, String idempotencyKey, User customer) {
         // Check idempotency cache first
         Optional<String> cachedResponse = idempotencyService.acquireOrVerify(idempotencyKey, customer, request);
