@@ -1,260 +1,418 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockFlow — Enterprise Commerce &amp; Inventory Orchestration Cloud</title>
+    <title>StockFlow &bull; Enterprise Merchant &amp; Multi-Vendor Orchestration</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;510;590;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Linear & Stripe Modern Obsidian Tokens */
-            --canvas: #08090a;
-            --surface-1: #0f1011;
-            --surface-2: #141517;
-            --surface-3: #1a1b1e;
-            --surface-hover: #212226;
+            /* Shopify Polaris Standard Corporate Tokens (Light) */
+            --p-canvas: #f6f6f7;
+            --p-surface: #ffffff;
+            --p-surface-subdued: #fafbfb;
+            --p-surface-hover: #f1f2f3;
+            --p-surface-pressed: #edeeef;
+            --p-surface-depressed: #edeeef;
             
-            --border: rgba(255, 255, 255, 0.08);
-            --border-subtle: rgba(255, 255, 255, 0.04);
-            --border-strong: rgba(255, 255, 255, 0.16);
-            --border-active: rgba(94, 106, 210, 0.4);
+            --p-border: #dbe1e6;
+            --p-border-subtle: #ebeef0;
+            --p-border-strong: #c9cccf;
+            --p-border-focus: #008060;
 
-            --text-primary: #f7f8f8;
-            --text-secondary: #d0d6e0;
-            --text-muted: #8a8f98;
-            --text-tertiary: #565a63;
+            --p-text-primary: #202223;
+            --p-text-secondary: #4a4d50;
+            --p-text-muted: #6d7175;
+            --p-text-subdued: #8c9196;
 
-            /* Linear Signature Lavender-Indigo Accent */
-            --accent: #5e6ad2;
-            --accent-hover: #6f7bee;
-            --accent-subtle: rgba(94, 106, 210, 0.12);
-            --accent-glow: rgba(94, 106, 210, 0.25);
+            /* Shopify Signature Merchant Green */
+            --p-primary: #008060;
+            --p-primary-hover: #006e52;
+            --p-primary-pressed: #005e46;
+            --p-primary-subtle: #f0f7f5;
+            --p-primary-border: #99d1c1;
 
-            /* Semantic State Colors */
-            --success: #27a644;
-            --success-subtle: rgba(39, 166, 68, 0.12);
-            --warning: #f5a623;
-            --warning-subtle: rgba(245, 166, 35, 0.12);
-            --danger: #e5484d;
-            --danger-subtle: rgba(229, 72, 77, 0.12);
+            /* Polaris Semantic Status Tokens */
+            --p-badge-success-bg: #cbf4c9;
+            --p-badge-success-text: #0e5814;
+            --p-badge-success-border: #98d99c;
 
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-full: 9999px;
+            --p-badge-warning-bg: #ffea8a;
+            --p-badge-warning-text: #573b00;
+            --p-badge-warning-border: #fed136;
+
+            --p-badge-critical-bg: #fed3d1;
+            --p-badge-critical-text: #8c1b18;
+            --p-badge-critical-border: #f48a85;
+
+            --p-badge-info-bg: #e4e5e7;
+            --p-badge-info-text: #202223;
+            --p-badge-info-border: #c9cccf;
+
+            /* Polaris Shadows & Radii */
+            --p-radius-xs: 3px;
+            --p-radius-sm: 4px;
+            --p-radius-md: 8px;
+            --p-radius-lg: 12px;
+            --p-radius-full: 9999px;
+
+            --p-shadow-card: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
+            --p-shadow-popover: 0 3px 6px -3px rgba(23, 24, 24, 0.08), 0 8px 20px -4px rgba(23, 24, 24, 0.12);
+            --p-shadow-drawer: -4px 0 24px rgba(0, 0, 0, 0.12);
 
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', "SF Mono", Consolas, monospace;
+        }
+
+        /* Shopify Polaris Night Mode */
+        [data-theme="dark"] {
+            --p-canvas: #0f1011;
+            --p-surface: #1a1b1c;
+            --p-surface-subdued: #141516;
+            --p-surface-hover: #222325;
+            --p-surface-pressed: #2a2b2e;
+            
+            --p-border: #2d3033;
+            --p-border-subtle: #222426;
+            --p-border-strong: #404448;
+            --p-border-focus: #00a67e;
+
+            --p-text-primary: #f6f6f7;
+            --p-text-secondary: #c9cccf;
+            --p-text-muted: #8c9196;
+            --p-text-subdued: #6d7175;
+
+            --p-primary: #00a67e;
+            --p-primary-hover: #00bd8f;
+            --p-primary-pressed: #008060;
+            --p-primary-subtle: rgba(0, 166, 126, 0.15);
+            --p-primary-border: rgba(0, 166, 126, 0.35);
+
+            --p-badge-success-bg: rgba(46, 133, 64, 0.25);
+            --p-badge-success-text: #69d98e;
+            --p-badge-success-border: rgba(105, 217, 142, 0.3);
+
+            --p-badge-warning-bg: rgba(181, 138, 0, 0.25);
+            --p-badge-warning-text: #ffe066;
+            --p-badge-warning-border: rgba(255, 224, 102, 0.3);
+
+            --p-badge-critical-bg: rgba(199, 43, 36, 0.25);
+            --p-badge-critical-text: #ff8580;
+            --p-badge-critical-border: rgba(255, 133, 128, 0.3);
+
+            --p-badge-info-bg: #2a2b2e;
+            --p-badge-info-text: #e1e3e5;
+            --p-badge-info-border: #404448;
+
+            --p-shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+            --p-shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --p-shadow-drawer: -4px 0 28px rgba(0, 0, 0, 0.6);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             font-family: var(--font-sans);
-            background-color: var(--canvas);
-            color: var(--text-primary);
+            background-color: var(--p-canvas);
+            color: var(--p-text-primary);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
-        /* Top Enterprise Navigation Bar */
-        header.enterprise-header {
-            background-color: rgba(15, 16, 17, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+        /* Shopify Top Corporate Bar */
+        header.polaris-header {
+            background-color: var(--p-surface);
+            border-bottom: 1px solid var(--p-border);
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
         }
-        .nav-inner {
-            max-width: 1280px;
+        .header-inner {
+            max-width: 1320px;
             margin: 0 auto;
             padding: 0 1.5rem;
-            height: 64px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
         .brand-cluster {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
             text-decoration: none;
             color: inherit;
         }
-        .brand-logo-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, #5e6ad2 0%, #38bdf8 100%);
+        .polaris-bag-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--p-primary) 0%, #004c3f 100%);
+            border-radius: var(--p-radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 12px var(--accent-glow);
+            box-shadow: 0 2px 5px rgba(0, 128, 96, 0.25);
         }
-        .brand-logo-icon svg {
-            width: 16px;
-            height: 16px;
+        .polaris-bag-logo svg {
+            width: 18px;
+            height: 18px;
             fill: #ffffff;
         }
-        .brand-text {
-            font-size: 1.05rem;
-            font-weight: 650;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
+        .brand-title-wrap {
+            display: flex;
+            flex-direction: column;
         }
-        .brand-badge {
-            font-size: 0.68rem;
-            font-weight: 590;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.15rem 0.45rem;
-            background: var(--surface-3);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text-muted);
+        .brand-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--p-text-primary);
+            line-height: 1.2;
+        }
+        .brand-sub {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--p-text-muted);
+            letter-spacing: 0.02em;
         }
 
-        /* Nav Tab Switcher */
-        .nav-tabs {
+        /* Polaris Navigation Tabs */
+        .polaris-tabs {
             display: flex;
             align-items: center;
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            gap: 0.25rem;
+            background-color: var(--p-surface-subdued);
             padding: 3px;
-            gap: 2px;
+            border-radius: var(--p-radius-md);
+            border: 1px solid var(--p-border-subtle);
         }
-        .nav-tab-btn {
+        .polaris-tab-btn {
             background: transparent;
             border: none;
-            color: var(--text-muted);
+            color: var(--p-text-secondary);
             font-family: inherit;
             font-size: 0.82rem;
-            font-weight: 510;
-            padding: 0.4rem 0.85rem;
-            border-radius: var(--radius-sm);
+            font-weight: 550;
+            padding: 0.45rem 0.85rem;
+            border-radius: var(--p-radius-sm);
             cursor: pointer;
             transition: all 0.15s ease;
             display: flex;
             align-items: center;
             gap: 0.4rem;
         }
-        .nav-tab-btn:hover {
-            color: var(--text-primary);
-            background-color: var(--surface-2);
+        .polaris-tab-btn:hover {
+            color: var(--p-text-primary);
+            background-color: var(--p-surface-hover);
         }
-        .nav-tab-btn.active {
-            color: var(--text-primary);
-            background-color: var(--surface-3);
-            border: 1px solid var(--border-strong);
-            font-weight: 590;
+        .polaris-tab-btn.active {
+            color: var(--p-primary);
+            background-color: var(--p-surface);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            font-weight: 600;
         }
 
-        /* User & System Status Cluster */
-        .user-cluster {
+        /* User & Store Operations Cluster */
+        .actions-cluster {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
         }
-        .system-pill {
+        .status-pill {
             display: flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
             font-size: 0.75rem;
-            color: var(--text-muted);
+            font-weight: 500;
+            color: var(--p-text-muted);
             padding: 0.3rem 0.65rem;
-            background-color: var(--surface-1);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-full);
+            background-color: var(--p-surface-subdued);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-full);
         }
         .status-dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background-color: var(--success);
-            box-shadow: 0 0 8px rgba(39, 166, 68, 0.6);
+            background-color: #27a644;
+            box-shadow: 0 0 6px rgba(39, 166, 68, 0.5);
         }
-        .persona-selector {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
+        .polaris-select {
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border-strong);
+            color: var(--p-text-primary);
             font-family: inherit;
             font-size: 0.82rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: var(--radius-sm);
+            font-weight: 500;
+            padding: 0.42rem 0.75rem;
+            border-radius: var(--p-radius-sm);
             cursor: pointer;
             outline: none;
-            transition: border-color 0.15s;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .persona-selector:focus {
-            border-color: var(--accent);
+        .polaris-select:focus {
+            border-color: var(--p-primary);
+            box-shadow: 0 0 0 1px var(--p-primary);
+        }
+        .theme-toggle-btn {
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            color: var(--p-text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: var(--p-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.95rem;
+        }
+        .theme-toggle-btn:hover {
+            color: var(--p-text-primary);
+            border-color: var(--p-border-strong);
+            background-color: var(--p-surface-hover);
         }
 
-        /* Main Workspace */
+        /* Main Workspace Container */
         main.workspace-container {
-            max-width: 1280px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 1.75rem 1.5rem 3rem 1.5rem;
             flex: 1;
             width: 100%;
         }
 
-        /* Linear-Style KPI Metrics Bar */
+        /* Shopify Polaris Real-Time Operational Banner */
+        .merchant-banner {
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-left: 4px solid var(--p-primary);
+            border-radius: var(--p-radius-md);
+            padding: 0.85rem 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--p-shadow-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .banner-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .banner-icon {
+            font-size: 1.2rem;
+        }
+        .banner-text {
+            font-size: 0.84rem;
+            color: var(--p-text-secondary);
+        }
+        .banner-text strong {
+            color: var(--p-text-primary);
+        }
+
+        /* Polaris Metric Cards Grid */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.75rem;
         }
         .metric-card {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 1.25rem 1.5rem;
-            transition: all 0.15s ease;
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-md);
+            padding: 1.25rem 1.35rem;
+            box-shadow: var(--p-shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .metric-card:hover {
-            border-color: var(--border-strong);
-            background-color: var(--surface-2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
-        .metric-label {
-            font-size: 0.78rem;
-            font-weight: 510;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 0.35rem;
+        .metric-label-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 0.35rem;
+        }
+        .metric-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--p-text-muted);
         }
         .metric-value {
-            font-size: 1.75rem;
-            font-weight: 650;
-            letter-spacing: -0.03em;
-            color: var(--text-primary);
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--p-text-primary);
             margin-bottom: 0.25rem;
         }
-        .metric-subtext {
+        .metric-footnote {
             font-size: 0.75rem;
-            color: var(--text-muted);
+            color: var(--p-text-muted);
             display: flex;
             align-items: center;
             gap: 0.35rem;
         }
-        .trend-up {
-            color: var(--success);
-            font-weight: 590;
+
+        /* Buttons & Polaris Controls */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: var(--p-radius-sm);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+            line-height: 1.2;
+        }
+        .btn-primary {
+            background-color: var(--p-primary);
+            color: #ffffff;
+            border-color: var(--p-primary);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary:hover {
+            background-color: var(--p-primary-hover);
+            border-color: var(--p-primary-hover);
+        }
+        .btn-primary:active {
+            background-color: var(--p-primary-pressed);
+        }
+        .btn-secondary {
+            background-color: var(--p-surface);
+            color: var(--p-text-primary);
+            border-color: var(--p-border-strong);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+        }
+        .btn-secondary:hover {
+            background-color: var(--p-surface-hover);
+            border-color: var(--p-border-strong);
+        }
+        .btn-sm {
+            padding: 0.35rem 0.65rem;
+            font-size: 0.78rem;
         }
 
-        /* Workspace Views */
+        /* Views Routing */
         .workspace-view {
             display: none;
         }
@@ -262,9 +420,9 @@
             display: block;
         }
 
-        /* Common Section Headers */
+        /* View Section Header */
         .view-header {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
@@ -273,100 +431,62 @@
         }
         .view-title-group h2 {
             font-size: 1.35rem;
-            font-weight: 650;
+            font-weight: 700;
             letter-spacing: -0.02em;
-            color: var(--text-primary);
+            color: var(--p-text-primary);
             margin-bottom: 0.2rem;
         }
         .view-title-group p {
-            font-size: 0.88rem;
-            color: var(--text-muted);
+            font-size: 0.85rem;
+            color: var(--p-text-muted);
         }
 
-        /* Buttons & Controls */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            font-family: inherit;
-            font-size: 0.84rem;
-            font-weight: 590;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.15s ease;
-            border: 1px solid transparent;
-        }
-        .btn-primary {
-            background-color: var(--accent);
-            color: #ffffff;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-        }
-        .btn-secondary {
-            background-color: var(--surface-2);
-            color: var(--text-secondary);
-            border-color: var(--border);
-        }
-        .btn-secondary:hover {
-            background-color: var(--surface-3);
-            color: var(--text-primary);
-            border-color: var(--border-strong);
-        }
-        .btn-sm {
-            padding: 0.3rem 0.65rem;
-            font-size: 0.78rem;
-        }
-
-        /* Storefront Product Catalog */
+        /* Product Cards Grid */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.25rem;
             margin-bottom: 2rem;
         }
         .product-card {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-md);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: border-color 0.15s ease, transform 0.15s ease;
+            box-shadow: var(--p-shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .product-card:hover {
-            border-color: var(--border-strong);
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
         }
         .product-media {
-            height: 160px;
-            background: linear-gradient(145deg, #121316 0%, #1a1b1f 100%);
+            height: 150px;
+            background: linear-gradient(135deg, var(--p-surface-subdued) 0%, var(--p-surface-hover) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--p-border-subtle);
             position: relative;
         }
         .product-media-icon {
-            font-size: 3.5rem;
-            opacity: 0.85;
+            font-size: 3.25rem;
+            opacity: 0.9;
         }
         .product-tag {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 0.7rem;
-            font-weight: 590;
+            top: 10px;
+            right: 10px;
+            font-size: 0.68rem;
+            font-weight: 600;
             padding: 0.2rem 0.5rem;
-            border-radius: var(--radius-sm);
-            background-color: rgba(8, 9, 10, 0.75);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
+            border-radius: var(--p-radius-sm);
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            color: var(--p-text-secondary);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         .product-body {
             padding: 1.25rem;
@@ -374,165 +494,205 @@
             flex-direction: column;
             flex: 1;
         }
-        .product-seller-tag {
-            font-size: 0.74rem;
-            font-weight: 510;
-            color: var(--accent);
-            margin-bottom: 0.25rem;
+        .product-store-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--p-primary);
+            margin-bottom: 0.3rem;
         }
         .product-title {
             font-size: 1.05rem;
             font-weight: 650;
             letter-spacing: -0.015em;
-            color: var(--text-primary);
+            color: var(--p-text-primary);
             margin-bottom: 0.4rem;
         }
         .product-desc {
-            font-size: 0.84rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
+            font-size: 0.82rem;
+            color: var(--p-text-muted);
+            margin-bottom: 1.15rem;
             flex: 1;
+            line-height: 1.45;
         }
         .product-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding-top: 0.85rem;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid var(--p-border-subtle);
         }
         .product-price {
             font-size: 1.25rem;
-            font-weight: 650;
+            font-weight: 700;
             letter-spacing: -0.02em;
-            color: var(--text-primary);
+            color: var(--p-text-primary);
         }
 
-        /* Order & Inventory High-Density Data Tables */
+        /* Polaris High-Density Data Tables */
         .table-container {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-md);
             overflow: hidden;
+            box-shadow: var(--p-shadow-card);
         }
-        .enterprise-table {
+        .polaris-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.86rem;
+            font-size: 0.84rem;
             text-align: left;
         }
-        .enterprise-table th {
-            background-color: var(--surface-2);
-            color: var(--text-muted);
-            font-weight: 590;
-            font-size: 0.75rem;
+        .polaris-table th {
+            background-color: var(--p-surface-subdued);
+            color: var(--p-text-secondary);
+            font-weight: 600;
+            font-size: 0.74rem;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--p-border);
         }
-        .enterprise-table td {
+        .polaris-table td {
             padding: 0.85rem 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
+            border-bottom: 1px solid var(--p-border-subtle);
+            color: var(--p-text-primary);
         }
-        .enterprise-table tr:hover td {
-            background-color: var(--surface-hover);
-            color: var(--text-primary);
+        .polaris-table tr:last-child td {
+            border-bottom: none;
         }
+        .polaris-table tr:hover td {
+            background-color: var(--p-surface-hover);
+        }
+
+        /* Polaris Status Badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            padding: 0.2rem 0.55rem;
-            border-radius: var(--radius-sm);
+            gap: 0.35rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: var(--p-radius-sm);
             font-size: 0.72rem;
-            font-weight: 590;
-            font-family: var(--font-mono);
-            letter-spacing: 0.02em;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            border: 1px solid transparent;
         }
-        .badge-confirmed {
-            background-color: var(--success-subtle);
-            color: var(--success);
-            border: 1px solid rgba(39, 166, 68, 0.25);
+        .badge-confirmed, .badge-success {
+            background-color: var(--p-badge-success-bg);
+            color: var(--p-badge-success-text);
+            border-color: var(--p-badge-success-border);
         }
-        .badge-pending {
-            background-color: var(--warning-subtle);
-            color: var(--warning);
-            border: 1px solid rgba(245, 166, 35, 0.25);
+        .badge-pending, .badge-warning {
+            background-color: var(--p-badge-warning-bg);
+            color: var(--p-badge-warning-text);
+            border-color: var(--p-badge-warning-border);
         }
-        .badge-shipped {
-            background-color: var(--accent-subtle);
-            color: var(--accent);
-            border: 1px solid rgba(94, 106, 210, 0.25);
+        .badge-shipped, .badge-info {
+            background-color: var(--p-badge-info-bg);
+            color: var(--p-badge-info-text);
+            border-color: var(--p-badge-info-border);
+        }
+        .badge-critical, .badge-cancelled {
+            background-color: var(--p-badge-critical-bg);
+            color: var(--p-badge-critical-text);
+            border-color: var(--p-badge-critical-border);
         }
 
-        /* Copilot Interface */
-        .copilot-shell {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+        /* Shopify Sidekick (AI Intelligence) Assistant */
+        .sidekick-card {
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-md);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 600px;
+            height: 620px;
+            box-shadow: var(--p-shadow-card);
         }
-        .copilot-header {
-            padding: 1rem 1.5rem;
-            background-color: var(--surface-2);
-            border-bottom: 1px solid var(--border);
+        .sidekick-header {
+            padding: 1rem 1.35rem;
+            background-color: var(--p-surface-subdued);
+            border-bottom: 1px solid var(--p-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .copilot-title-group {
+        .sidekick-identity {
             display: flex;
             align-items: center;
             gap: 0.65rem;
         }
-        .copilot-title-group h3 {
+        .sidekick-sparkle-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: var(--p-radius-sm);
+            background: linear-gradient(135deg, var(--p-primary) 0%, #38bdf8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
             font-size: 0.95rem;
-            font-weight: 650;
-            letter-spacing: -0.01em;
-            color: var(--text-primary);
         }
-        .copilot-stream {
+        .sidekick-title-text h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--p-text-primary);
+        }
+        .sidekick-title-text p {
+            font-size: 0.72rem;
+            color: var(--p-text-muted);
+        }
+        .sidekick-stream {
             flex: 1;
             overflow-y: auto;
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            background-color: #050607;
+            gap: 1.15rem;
+            background-color: var(--p-surface-subdued);
         }
-        .msg-bubble {
-            max-width: 80%;
-            padding: 0.85rem 1.15rem;
-            border-radius: var(--radius-md);
-            font-size: 0.88rem;
-            line-height: 1.55;
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 82%;
         }
-        .msg-bubble.user {
+        .msg-row.user {
             align-self: flex-end;
-            background-color: var(--surface-3);
-            border: 1px solid var(--border-strong);
-            color: var(--text-primary);
-            border-bottom-right-radius: 2px;
+            align-items: flex-end;
         }
-        .msg-bubble.copilot {
+        .msg-row.sidekick {
             align-self: flex-start;
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            border-bottom-left-radius: 2px;
+            align-items: flex-start;
         }
-        .msg-bubble strong { color: var(--text-primary); }
         .msg-meta {
+            font-size: 0.7rem;
+            color: var(--p-text-muted);
+            margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            margin-bottom: 0.35rem;
-            font-size: 0.72rem;
-            color: var(--text-muted);
+        }
+        .msg-bubble {
+            padding: 0.85rem 1.15rem;
+            border-radius: var(--p-radius-md);
+            font-size: 0.86rem;
+            line-height: 1.55;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .msg-row.user .msg-bubble {
+            background-color: var(--p-primary);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+        .msg-row.user .msg-bubble strong {
+            color: #ffffff;
+        }
+        .msg-row.sidekick .msg-bubble {
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            color: var(--p-text-primary);
+            border-bottom-left-radius: 2px;
         }
         .action-chip-cluster {
             display: flex;
@@ -541,76 +701,78 @@
             margin-top: 0.75rem;
         }
         .action-chip {
-            background-color: var(--surface-2);
-            color: var(--accent);
-            border: 1px solid var(--border);
-            padding: 0.3rem 0.65rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.78rem;
+            background-color: var(--p-surface);
+            color: var(--p-primary);
+            border: 1px solid var(--p-border-strong);
+            padding: 0.35rem 0.7rem;
+            border-radius: var(--p-radius-full);
+            font-size: 0.76rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.15s ease;
             font-family: inherit;
         }
         .action-chip:hover {
-            background-color: var(--accent);
-            color: #ffffff;
-            border-color: var(--accent);
+            background-color: var(--p-primary-subtle);
+            border-color: var(--p-primary);
         }
-        .copilot-prompts-bar {
-            padding: 0.75rem 1.5rem;
-            background-color: var(--surface-1);
-            border-top: 1px solid var(--border);
+        .sidekick-prompts-bar {
+            padding: 0.75rem 1.25rem;
+            background-color: var(--p-surface);
+            border-top: 1px solid var(--p-border-subtle);
             display: flex;
             align-items: center;
             gap: 0.5rem;
             overflow-x: auto;
         }
         .prompt-pill {
-            background-color: var(--surface-2);
-            color: var(--text-muted);
-            border: 1px solid var(--border-subtle);
-            padding: 0.3rem 0.75rem;
-            border-radius: var(--radius-full);
-            font-size: 0.76rem;
+            background-color: var(--p-surface-subdued);
+            color: var(--p-text-secondary);
+            border: 1px solid var(--p-border);
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--p-radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             transition: all 0.15s ease;
             font-family: inherit;
         }
         .prompt-pill:hover {
-            color: var(--text-primary);
-            border-color: var(--border-strong);
-            background-color: var(--surface-3);
+            color: var(--p-text-primary);
+            border-color: var(--p-border-strong);
+            background-color: var(--p-surface-hover);
         }
-        .copilot-input-bar {
-            padding: 1rem 1.5rem;
-            background-color: var(--surface-2);
-            border-top: 1px solid var(--border);
+        .sidekick-input-bar {
+            padding: 1rem 1.25rem;
+            background-color: var(--p-surface);
+            border-top: 1px solid var(--p-border);
             display: flex;
             gap: 0.75rem;
         }
-        .copilot-input-field {
+        .sidekick-input-field {
             flex: 1;
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.6rem 0.9rem;
-            border-radius: var(--radius-sm);
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border-strong);
+            color: var(--p-text-primary);
+            padding: 0.65rem 0.9rem;
+            border-radius: var(--p-radius-sm);
             font-family: inherit;
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             outline: none;
-            transition: border-color 0.15s;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .copilot-input-field:focus {
-            border-color: var(--accent);
+        .sidekick-input-field:focus {
+            border-color: var(--p-primary);
+            box-shadow: 0 0 0 1px var(--p-primary);
         }
 
-        /* Cart Slide-out / Modal Drawer */
+        /* Cart Slide-out Drawer */
         .cart-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(3px);
             z-index: 200;
             display: none;
             align-items: center;
@@ -621,20 +783,21 @@
         }
         .cart-drawer {
             width: 440px;
-            max-width: 90vw;
+            max-width: 92vw;
             height: 100vh;
-            background-color: var(--surface-1);
-            border-left: 1px solid var(--border);
+            background-color: var(--p-surface);
+            border-left: 1px solid var(--p-border);
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
+            box-shadow: var(--p-shadow-drawer);
         }
         .cart-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--p-border);
             margin-bottom: 1.25rem;
         }
         .cart-items-list {
@@ -648,14 +811,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.85rem;
-            background-color: var(--surface-2);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            background-color: var(--p-surface-subdued);
+            border: 1px solid var(--p-border-subtle);
+            border-radius: var(--p-radius-sm);
         }
         .cart-footer {
             padding-top: 1.25rem;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--p-border);
         }
 
         /* Developer Hub Cards */
@@ -665,86 +828,90 @@
             gap: 1.25rem;
         }
         .dev-card {
-            background-color: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            background-color: var(--p-surface);
+            border: 1px solid var(--p-border);
+            border-radius: var(--p-radius-md);
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            box-shadow: var(--p-shadow-card);
         }
         .dev-card h4 {
             font-size: 1rem;
-            font-weight: 650;
-            color: var(--text-primary);
+            font-weight: 700;
+            color: var(--p-text-primary);
         }
         .dev-card p {
             font-size: 0.84rem;
-            color: var(--text-muted);
+            color: var(--p-text-muted);
             flex: 1;
+            line-height: 1.45;
         }
 
-        /* Footer */
-        footer.enterprise-footer {
-            border-top: 1px solid var(--border);
-            background-color: var(--surface-1);
-            padding: 1.5rem 0;
+        /* Polaris Corporate Footer */
+        footer.polaris-footer {
+            border-top: 1px solid var(--p-border);
+            background-color: var(--p-surface);
+            padding: 1.25rem 0;
             margin-top: auto;
         }
         .footer-inner {
-            max-width: 1280px;
+            max-width: 1320px;
             margin: 0 auto;
             padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.78rem;
-            color: var(--text-muted);
+            font-size: 0.76rem;
+            color: var(--p-text-muted);
         }
         .footer-links {
             display: flex;
             gap: 1.25rem;
         }
         .footer-links a {
-            color: var(--text-muted);
+            color: var(--p-text-muted);
             text-decoration: none;
             transition: color 0.15s;
         }
         .footer-links a:hover {
-            color: var(--text-primary);
+            color: var(--p-primary);
         }
     </style>
 </head>
 <body>
 
-    <!-- Enterprise Top Navigation Bar -->
-    <header class="enterprise-header">
-        <div class="nav-inner">
+    <!-- Shopify Polaris Corporate Top Header -->
+    <header class="polaris-header">
+        <div class="header-inner">
             <div class="brand-cluster">
-                <div class="brand-logo-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <div class="polaris-bag-logo">
+                    <svg viewBox="0 0 24 24"><path d="M16 6V4a4 4 0 0 0-8 0v2H4v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6h-4zm-6-2a2 2 0 0 1 4 0v2h-4V4zm8 16H6V8h12v12z"/></svg>
                 </div>
-                <span class="brand-text">StockFlow</span>
-                <span class="brand-badge">Enterprise 3.3.5</span>
+                <div class="brand-title-wrap">
+                    <span class="brand-title">StockFlow</span>
+                    <span class="brand-sub">Polaris Commerce Cloud</span>
+                </div>
             </div>
 
-            <!-- Navigation Tabs -->
-            <nav class="nav-tabs">
-                <button class="nav-tab-btn active" data-tab="storefront">🛍️ Storefront</button>
-                <button class="nav-tab-btn" data-tab="orders">📦 Order Pipeline</button>
-                <button class="nav-tab-btn" data-tab="inventory">📊 Inventory Engine</button>
-                <button class="nav-tab-btn" data-tab="copilot">🤖 StockFlow Copilot</button>
-                <button class="nav-tab-btn" data-tab="developer">⚡ API Gateway</button>
+            <!-- Polaris Navigation Tabs -->
+            <nav class="polaris-tabs">
+                <button class="polaris-tab-btn active" data-tab="storefront">🛍️ Storefront</button>
+                <button class="polaris-tab-btn" data-tab="orders">📦 Order Pipeline</button>
+                <button class="polaris-tab-btn" data-tab="inventory">📊 Stock Ledger</button>
+                <button class="polaris-tab-btn" data-tab="copilot">✨ Shopify Sidekick (AI)</button>
+                <button class="polaris-tab-btn" data-tab="developer">⚡ API Gateway</button>
             </nav>
 
-            <!-- User Context & Persona Switcher -->
-            <div class="user-cluster">
-                <div class="system-pill">
+            <!-- Storefront Operations & Persona Switcher -->
+            <div class="actions-cluster">
+                <div class="status-pill">
                     <div class="status-dot"></div>
-                    <span id="systemStatusLabel">Cluster Operational</span>
+                    <span id="systemStatusLabel">100% Operational</span>
                 </div>
 
-                <select id="personaSelector" class="persona-selector">
+                <select id="personaSelector" class="polaris-select">
                     <option value="CUSTOMER" selected>👤 Jane Customer (Customer)</option>
                     <option value="SELLER">🏪 Apex Electronics (Merchant)</option>
                     <option value="ADMIN">🛡️ Operations Lead (System Admin)</option>
@@ -753,51 +920,67 @@
 
                 <button id="openCartBtn" class="btn btn-secondary btn-sm" style="position: relative;">
                     🛒 Cart
-                    <span id="cartCountBadge" style="background: var(--accent); color: white; border-radius: 99px; padding: 1px 6px; font-size: 0.7rem; font-weight: 600; margin-left: 3px;">0</span>
+                    <span id="cartCountBadge" style="background: var(--p-primary); color: white; border-radius: 99px; padding: 1px 6px; font-size: 0.7rem; font-weight: 600; margin-left: 3px;">0</span>
+                </button>
+
+                <!-- Theme Switcher: Shopify Light / Polaris Night -->
+                <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Theme (Polaris Light / Night)">
+                    ☀️
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace -->
+    <!-- Main Merchant Workspace -->
     <main class="workspace-container">
 
-        <!-- Executive Real-Time Metrics Strip -->
+        <!-- Polaris Corporate Status Banner -->
+        <div class="merchant-banner">
+            <div class="banner-content">
+                <span class="banner-icon">⚡</span>
+                <div class="banner-text">
+                    <strong>Enterprise Multi-Vendor Engine Active:</strong> High-throughput inventory reservations, non-blocking asynchronous payments, and guaranteed zero-overselling via PostgreSQL pessimistic row locks.
+                </div>
+            </div>
+            <span class="status-badge badge-confirmed">POLARIS 2026.1</span>
+        </div>
+
+        <!-- Real-Time Merchant KPI Metrics Strip -->
         <section class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-label">
-                    <span>Gross Merchandise Value</span>
-                    <span class="trend-up">↑ 14.2%</span>
+                <div class="metric-label-row">
+                    <span class="metric-title">Gross Merchandise Value</span>
+                    <span class="status-badge badge-confirmed">↑ 14.2%</span>
                 </div>
                 <div class="metric-value" id="metricGmv">$1,249,850.00</div>
-                <div class="metric-subtext">Authoritative PostgreSQL single source of truth</div>
+                <div class="metric-footnote">Authoritative PostgreSQL single source of truth</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">
-                    <span>Order Fulfillment SLA</span>
-                    <span class="trend-up">99.98%</span>
+                <div class="metric-label-row">
+                    <span class="metric-title">Fulfillment SLA</span>
+                    <span class="status-badge badge-confirmed">99.98%</span>
                 </div>
                 <div class="metric-value" id="metricOrders">2,840 Active</div>
-                <div class="metric-subtext">Zero overselling via sorted pessimistic row locks</div>
+                <div class="metric-footnote">Zero overselling via sorted pessimistic row locks</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">
-                    <span>Available Inventory Pool</span>
-                    <span style="color: var(--text-muted);">99.4% Pool</span>
+                <div class="metric-label-row">
+                    <span class="metric-title">Available Inventory Pool</span>
+                    <span class="status-badge badge-shipped">99.4% Healthy</span>
                 </div>
                 <div class="metric-value" id="metricInventory">98,420 Units</div>
-                <div class="metric-subtext">Continuous check-constraint quantity balance</div>
+                <div class="metric-footnote">Continuous check-constraint quantity balance</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">
-                    <span>Transactional Outbox</span>
-                    <span class="trend-up">Real-time</span>
+                <div class="metric-label-row">
+                    <span class="metric-title">Transactional Outbox</span>
+                    <span class="status-badge badge-confirmed">0 Backlog</span>
                 </div>
-                <div class="metric-value" id="metricOutbox">0 Backlog</div>
-                <div class="metric-subtext">PostgreSQL <code>SKIP LOCKED</code> background worker</div>
+                <div class="metric-value" id="metricOutbox">Real-time</div>
+                <div class="metric-footnote">PostgreSQL <code>SKIP LOCKED</code> event dispatcher</div>
             </div>
         </section>
 
@@ -815,7 +998,7 @@
 
             <div id="productCatalogGrid" class="product-grid">
                 <!-- Dynamically populated from /api/v1/products -->
-                <div class="product-card" style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: var(--text-muted);">
+                <div class="product-card" style="grid-column: 1 / -1; padding: 2.5rem; text-align: center; color: var(--p-text-muted);">
                     Loading marketplace catalog from backend...
                 </div>
             </div>
@@ -834,7 +1017,7 @@
             </div>
 
             <div class="table-container">
-                <table class="enterprise-table">
+                <table class="polaris-table">
                     <thead>
                         <tr>
                             <th>Order Number</th>
@@ -848,7 +1031,7 @@
                     </thead>
                     <tbody id="ordersTableBody">
                         <tr>
-                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            <td colspan="7" style="text-align: center; color: var(--p-text-muted); padding: 2.5rem;">
                                 Select a Customer persona or run checkout to display active orders.
                             </td>
                         </tr>
@@ -870,7 +1053,7 @@
             </div>
 
             <div class="table-container">
-                <table class="enterprise-table">
+                <table class="polaris-table">
                     <thead>
                         <tr>
                             <th>SKU</th>
@@ -889,50 +1072,53 @@
             </div>
         </section>
 
-        <!-- VIEW 4: StockFlow Copilot (AI Intelligence) -->
+        <!-- VIEW 4: Shopify Sidekick (AI Intelligence) -->
         <section id="view-copilot" class="workspace-view">
             <div class="view-header">
                 <div class="view-title-group">
-                    <h2>StockFlow Copilot</h2>
-                    <p>Deterministic conversational intelligence with strict broken object-level authorization (BOLA) boundaries.</p>
+                    <h2>Shopify Sidekick &bull; Commerce Intelligence</h2>
+                    <p>Deterministic operational intelligence with strict broken object-level authorization (BOLA) boundaries.</p>
                 </div>
                 <button id="clearCopilotBtn" class="btn btn-secondary btn-sm">Clear Thread</button>
             </div>
 
-            <div class="copilot-shell">
-                <div class="copilot-header">
-                    <div class="copilot-title-group">
-                        <div class="brand-logo-icon" style="width: 22px; height: 22px;">
-                            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <div class="sidekick-card">
+                <div class="sidekick-header">
+                    <div class="sidekick-identity">
+                        <div class="sidekick-sparkle-icon">✨</div>
+                        <div class="sidekick-title-text">
+                            <h3>Shopify Sidekick</h3>
+                            <p>Commerce &amp; Operations Assistant</p>
                         </div>
-                        <h3>Copilot Commerce Assistant</h3>
                     </div>
                     <span id="copilotActiveBadge" class="status-badge badge-confirmed">CUSTOMER SESSION</span>
                 </div>
 
                 <!-- Chat Messages Stream -->
-                <div id="copilotStream" class="copilot-stream">
-                    <div class="msg-bubble copilot">
+                <div id="copilotStream" class="sidekick-stream">
+                    <div class="msg-row sidekick">
                         <div class="msg-meta">
-                            <span class="status-badge badge-shipped" style="font-size: 0.65rem;">STOCKFLOW INTELLIGENCE</span>
-                            <span>System Ready</span>
+                            <span class="status-badge badge-shipped">SIDEKICK INTELLIGENCE</span>
+                            <span>System Operational</span>
                         </div>
-                        <div>Welcome to <strong>StockFlow Copilot</strong>. How can I assist your operations today? You can inquire about <strong>real-time order tracking, live cart contents, return eligibility, merchant low-stock alerts, or platform GMV revenue</strong>.</div>
+                        <div class="msg-bubble">
+                            Welcome to <strong>Shopify Sidekick</strong> for StockFlow. I can help you with <strong>real-time order tracking, cart reviews, 30-day return policies, merchant low-stock warnings, and platform gross merchandise volume (GMV)</strong>. How may I assist your business today?
+                        </div>
                     </div>
                 </div>
 
-                <!-- Contextual Quick-Action Prompts -->
-                <div class="copilot-prompts-bar">
-                    <span style="font-size: 0.72rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; margin-right: 0.25rem;">Suggested:</span>
+                <!-- Contextual Quick-Action Suggested Prompts -->
+                <div class="sidekick-prompts-bar">
+                    <span style="font-size: 0.72rem; color: var(--p-text-muted); text-transform: uppercase; font-weight: 600; margin-right: 0.25rem;">Suggested:</span>
                     <div id="copilotPillsContainer" style="display: flex; gap: 0.4rem;">
                         <!-- Injected based on active persona -->
                     </div>
                 </div>
 
                 <!-- Input Field -->
-                <form id="copilotForm" class="copilot-input-bar">
-                    <input type="text" id="copilotInput" class="copilot-input-field" placeholder="Ask Copilot (e.g., 'Where is my order?', 'Show low stock warnings', 'What is our GMV today?')..." required autocomplete="off" />
-                    <button type="submit" class="btn btn-primary">Send Query</button>
+                <form id="copilotForm" class="sidekick-input-bar">
+                    <input type="text" id="copilotInput" class="sidekick-input-field" placeholder="Ask Sidekick (e.g. 'Show available products', 'Recommend audio gear under $250', 'Where is my order?')..." required autocomplete="off" />
+                    <button type="submit" class="btn btn-primary">Send Inquiry</button>
                 </form>
             </div>
         </section>
@@ -968,7 +1154,7 @@
                 <div class="dev-card">
                     <h4>Executable Client Test Suite</h4>
                     <p>Comprehensive <code>requests.http</code> test script covering all 11 lifecycle workflows and edge case defenses.</p>
-                    <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);">requests.http (bundled in repo)</span>
+                    <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--p-primary); font-weight: 600;">requests.http (bundled in repo)</span>
                 </div>
             </div>
         </section>
@@ -979,33 +1165,33 @@
     <div id="cartOverlay" class="cart-overlay">
         <div class="cart-drawer">
             <div class="cart-header">
-                <h3 style="font-size: 1.1rem; font-weight: 650;">Shopping Cart</h3>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--p-text-primary);">Shopping Cart</h3>
                 <button id="closeCartBtn" class="btn btn-secondary btn-sm">✕ Close</button>
             </div>
 
             <div id="cartItemsContainer" class="cart-items-list">
-                <p style="color: var(--text-muted); text-align: center; margin-top: 3rem;">Your cart is empty.</p>
+                <p style="color: var(--p-text-muted); text-align: center; margin-top: 3rem;">Your cart is empty.</p>
             </div>
 
             <div class="cart-footer">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span style="color: var(--text-muted); font-size: 0.9rem;">Estimated Total:</span>
-                    <span id="cartTotalDisplay" style="font-size: 1.35rem; font-weight: 650; color: var(--text-primary);">$0.00 USD</span>
+                    <span style="color: var(--p-text-muted); font-size: 0.9rem;">Estimated Total:</span>
+                    <span id="cartTotalDisplay" style="font-size: 1.35rem; font-weight: 700; color: var(--p-text-primary);">$0.00 USD</span>
                 </div>
                 <button id="checkoutBtn" class="btn btn-primary" style="width: 100%; padding: 0.75rem;" onclick="executeCheckout()">
                     ⚡ Execute Idempotent Checkout
                 </button>
-                <div style="font-size: 0.72rem; color: var(--text-tertiary); text-align: center; margin-top: 0.5rem;">
+                <div style="font-size: 0.72rem; color: var(--p-text-muted); text-align: center; margin-top: 0.5rem;">
                     Guaranteed zero-overselling &amp; idempotent replay protection
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enterprise Footer -->
-    <footer class="enterprise-footer">
+    <!-- Polaris Corporate Footer -->
+    <footer class="polaris-footer">
         <div class="footer-inner">
-            <div>StockFlow Enterprise Cloud &bull; Multi-Vendor Orchestration &bull; 68 Tests Verified (100% Pass)</div>
+            <div>StockFlow &bull; Enterprise Shopify Polaris Commerce Architecture &bull; 68 Tests Verified (100% Pass)</div>
             <div class="footer-links">
                 <a href="/swagger-ui.html" target="_blank">Swagger UI</a>
                 <a href="/actuator/health" target="_blank">Health Status</a>
@@ -1024,14 +1210,15 @@
         let currentConversationId = null;
         let cartItemsCache = [];
 
-        // Professional Commerce Prompts (Tailored to Real Operations)
+        // Professional Commerce Prompts (Shopify Sidekick Context)
         const rolePrompts = {
             'CUSTOMER': [
+                "Show available products",
+                "Recommend audio equipment under $250",
                 "Where is order ORD-20261028-0001?",
                 "What items are in my cart right now?",
                 "What is the return & refund policy?",
-                "Can I cancel my pending order?",
-                "Recommend audio equipment under $250"
+                "Can I cancel my pending order?"
             ],
             'SELLER': [
                 "Show inventory items below safety threshold",
@@ -1054,7 +1241,7 @@
         };
 
         // DOM Elements
-        const navTabBtns = document.querySelectorAll('.nav-tab-btn');
+        const navTabBtns = document.querySelectorAll('.polaris-tab-btn');
         const workspaceViews = document.querySelectorAll('.workspace-view');
         const personaSelector = document.getElementById('personaSelector');
         const openCartBtn = document.getElementById('openCartBtn');
@@ -1072,6 +1259,21 @@
         const copilotPillsContainer = document.getElementById('copilotPillsContainer');
         const copilotActiveBadge = document.getElementById('copilotActiveBadge');
         const clearCopilotBtn = document.getElementById('clearCopilotBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+        // Theme Toggle (Shopify Light / Polaris Night)
+        themeToggleBtn.onclick = () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            themeToggleBtn.textContent = nextTheme === 'light' ? '☀️' : '🌙';
+            localStorage.setItem('stockflow_theme', nextTheme);
+        };
+        const savedTheme = localStorage.getItem('stockflow_theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggleBtn.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+        }
 
         // Tab Switching
         navTabBtns.forEach(btn => {
@@ -1142,7 +1344,7 @@
                     const products = data.content || [];
                     
                     if (products.length === 0) {
-                        productCatalogGrid.innerHTML = '<div style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-muted);">No products found in catalog.</div>';
+                        productCatalogGrid.innerHTML = '<div style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--p-text-muted);">No products found in catalog.</div>';
                         return;
                     }
 
@@ -1153,11 +1355,11 @@
                                 <span class="product-tag">${escapeHtml(p.categoryName || 'Electronics')}</span>
                             </div>
                             <div class="product-body">
-                                <div class="product-seller-tag">STORE: ${escapeHtml(p.storeName || 'Apex Electronics')}</div>
+                                <div class="product-store-tag">STORE: ${escapeHtml(p.storeName || 'Apex Electronics')}</div>
                                 <h3 class="product-title">${escapeHtml(p.title)}</h3>
                                 <p class="product-desc">${escapeHtml(p.description || 'High-fidelity audio with active noise cancellation.')}</p>
                                 <div class="product-footer">
-                                    <div class="product-price">$${Number(p.price).toFixed(2)} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">USD</span></div>
+                                    <div class="product-price">$${Number(p.price).toFixed(2)} <span style="font-size: 0.72rem; color: var(--p-text-muted); font-weight: normal;">USD</span></div>
                                     <button class="btn btn-primary btn-sm" onclick="addToCart('${p.id}', 'SKU-AUDIO-PRO-BLK')">Add to Cart</button>
                                 </div>
                             </div>
@@ -1209,7 +1411,7 @@
 
         async function refreshCart() {
             if (!currentToken) {
-                cartItemsContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 3rem;">Please select Customer persona to view cart.</p>';
+                cartItemsContainer.innerHTML = '<p style="color: var(--p-text-muted); text-align: center; margin-top: 3rem;">Please select Customer persona to view cart.</p>';
                 cartTotalDisplay.textContent = '$0.00 USD';
                 cartCountBadge.textContent = '0';
                 return;
@@ -1227,15 +1429,15 @@
                     cartTotalDisplay.textContent = `$${Number(cart.totalAmount || 0).toFixed(2)} ${cart.currency || 'USD'}`;
 
                     if (items.length === 0) {
-                        cartItemsContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 3rem;">Your cart is empty.</p>';
+                        cartItemsContainer.innerHTML = '<p style="color: var(--p-text-muted); text-align: center; margin-top: 3rem;">Your cart is empty.</p>';
                     } else {
                         cartItemsContainer.innerHTML = items.map(item => `
                             <div class="cart-item-row">
                                 <div>
-                                    <div style="font-weight: 600; color: var(--text-primary);">${escapeHtml(item.productTitle || item.sku)}</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">${item.sku} &bull; Qty: ${item.quantity}</div>
+                                    <div style="font-weight: 600; color: var(--p-text-primary); font-size: 0.88rem;">${escapeHtml(item.productTitle || item.sku)}</div>
+                                    <div style="font-size: 0.74rem; color: var(--p-text-muted);">${item.sku} &bull; Qty: ${item.quantity}</div>
                                 </div>
-                                <div style="font-weight: 600; color: var(--text-primary);">$${Number(item.itemTotal || 0).toFixed(2)}</div>
+                                <div style="font-weight: 700; color: var(--p-text-primary);">$${Number(item.itemTotal || 0).toFixed(2)}</div>
                             </div>
                         `).join('');
                     }
@@ -1286,7 +1488,10 @@
                     const order = await res.json();
                     cartOverlay.classList.remove('open');
                     refreshCart();
-                    alert(`✅ Order Created Successfully!\nOrder Number: ${order.orderNumber}\nStatus: ${order.status}\nTotal: $${order.totalAmount} ${order.currency}`);
+                    alert(`✅ Order Created Successfully!
+Order Number: ${order.orderNumber}
+Status: ${order.status}
+Total: $${order.totalAmount} ${order.currency}`);
                     
                     // Switch to Orders Tab
                     document.querySelector('[data-tab="orders"]').click();
@@ -1302,7 +1507,7 @@
         // Load Customer Orders
         async function loadOrders() {
             if (!currentToken) {
-                ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">Please authenticate as a Customer to view order history.</td></tr>';
+                ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--p-text-muted); padding: 2.5rem;">Please authenticate as a Customer to view order history.</td></tr>';
                 return;
             }
 
@@ -1316,20 +1521,20 @@
                     const orders = data.content || [];
                     
                     if (orders.length === 0) {
-                        ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No orders found. Add items to cart and checkout!</td></tr>';
+                        ordersTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--p-text-muted); padding: 2.5rem;">No orders found. Add items to cart and checkout!</td></tr>';
                         return;
                     }
 
                     ordersTableBody.innerHTML = orders.map(o => `
                         <tr>
-                            <td><strong style="color: var(--text-primary); font-family: var(--font-mono);">${escapeHtml(o.orderNumber)}</strong></td>
+                            <td><strong style="color: var(--p-text-primary); font-family: var(--font-mono);">${escapeHtml(o.orderNumber)}</strong></td>
                             <td>${escapeHtml(currentEmail)}</td>
-                            <td>$${Number(o.totalAmount).toFixed(2)} ${o.currency}</td>
+                            <td><strong>$${Number(o.totalAmount).toFixed(2)}</strong> ${o.currency}</td>
                             <td><span class="status-badge ${o.status === 'CONFIRMED' ? 'badge-confirmed' : 'badge-pending'}">${o.status}</span></td>
                             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(o.shippingAddress)}</td>
                             <td>${new Date(o.createdAt).toLocaleDateString()}</td>
                             <td>
-                                <button class="btn btn-secondary btn-sm" onclick="trackOrderInCopilot('${o.orderNumber}')">Track Copilot</button>
+                                <button class="btn btn-secondary btn-sm" onclick="trackOrderInSidekick('${o.orderNumber}')">Track Sidekick</button>
                             </td>
                         </tr>
                     `).join('');
@@ -1339,7 +1544,7 @@
             }
         }
 
-        function trackOrderInCopilot(orderNumber) {
+        function trackOrderInSidekick(orderNumber) {
             document.querySelector('[data-tab="copilot"]').click();
             const query = `Where is order ${orderNumber}?`;
             copilotInput.value = query;
@@ -1352,18 +1557,18 @@
                 <tr>
                     <td><code>SKU-AUDIO-PRO-BLK</code></td>
                     <td>Noise Cancelling Headphones Pro</td>
-                    <td><strong style="color: var(--text-primary);">50</strong></td>
-                    <td><span style="color: var(--warning);">1</span></td>
-                    <td><strong style="color: var(--success);">49</strong></td>
+                    <td><strong style="color: var(--p-text-primary);">50</strong></td>
+                    <td><span style="color: var(--p-badge-warning-text); font-weight: 600;">1</span></td>
+                    <td><strong style="color: var(--p-primary);">49</strong></td>
                     <td><span class="status-badge badge-confirmed">OPTIMAL</span></td>
                     <td>
-                        <button class="btn btn-secondary btn-sm" onclick="copilotInput.value='Check low stock items'; document.querySelector('[data-tab=\\'copilot\\']').click(); submitCopilotQuery('Check low stock items');">Audit SKU</button>
+                        <button class="btn btn-secondary btn-sm" onclick="copilotInput.value='Check low stock items'; document.querySelector('[data-tab=\'copilot\']').click(); submitCopilotQuery('Check low stock items');">Audit SKU</button>
                     </td>
                 </tr>
             `;
         }
 
-        // Copilot (AI Intelligence) Messaging
+        // Shopify Sidekick AI Messaging
         function updateCopilotPills() {
             copilotPillsContainer.innerHTML = '';
             const prompts = rolePrompts[currentRole] || [];
@@ -1382,15 +1587,18 @@
 
         function appendUserMessage(text) {
             const div = document.createElement('div');
-            div.className = 'msg-bubble user';
-            div.innerHTML = `<div class="msg-meta"><span>YOU (${currentRole})</span></div><div>${escapeHtml(text)}</div>`;
+            div.className = 'msg-row user';
+            div.innerHTML = `
+                <div class="msg-meta"><span>YOU (${currentRole})</span></div>
+                <div class="msg-bubble">${escapeHtml(text)}</div>
+            `;
             copilotStream.appendChild(div);
             copilotStream.scrollTop = copilotStream.scrollHeight;
         }
 
         function appendCopilotMessage(content, intent, actions) {
             const div = document.createElement('div');
-            div.className = 'msg-bubble copilot';
+            div.className = 'msg-row sidekick';
             
             let actionsHtml = '';
             if (actions && actions.length > 0) {
@@ -1403,11 +1611,10 @@
 
             div.innerHTML = `
                 <div class="msg-meta">
-                    <span class="status-badge badge-confirmed" style="font-size: 0.65rem;">COPILOT</span>
+                    <span class="status-badge badge-confirmed" style="font-size: 0.65rem;">SIDEKICK</span>
                     ${intentTag}
                 </div>
-                <div>${formatMarkdown(content)}</div>
-                ${actionsHtml}
+                <div class="msg-bubble">${formatMarkdown(content)}${actionsHtml}</div>
             `;
             copilotStream.appendChild(div);
 
@@ -1477,8 +1684,9 @@
             let s = escapeHtml(text);
             s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            s = s.replace(/`([^`]+)`/g, '<code style="font-family: var(--font-mono); background: #000; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; color: var(--accent);">$1</code>');
-            s = s.replace(/\n/g, '<br>');
+            s = s.replace(/`([^`]+)`/g, '<code style="font-family: var(--font-mono); background: var(--p-surface-subdued); border: 1px solid var(--p-border); padding: 1px 4px; border-radius: 3px; font-size: 0.8rem; color: var(--p-primary);">$1</code>');
+            s = s.replace(/
+/g, '<br>');
             return s;
         }
 

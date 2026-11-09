@@ -212,13 +212,70 @@ public class ChatbotService {
             return handleHelpMenu(user, userRole);
         }
 
-        // 2. Persona Specific Routing
+        // 2. Global Commerce FAQs (Accessible across all personas)
+        if (matchesAny(lower, "payment", "credit card", "stripe", "gateway", "how to pay", "pay order")) {
+            return handlePaymentFaq();
+        }
+        if (matchesAny(lower, "shipping", "delivery", "carrier", "transit", "how long does shipping take", "fulfillment policy")) {
+            return handleShippingFaq();
+        }
+        if (matchesAny(lower, "return policy", "refund policy", "how to return", "30-day return", "returns and refund")) {
+            return handleReturnPolicyFaq();
+        }
+
+        // 3. Persona Specific Routing
         return switch (userRole) {
             case "ADMIN" -> handleAdminQuery(prompt, lower, user);
             case "SELLER" -> handleSellerQuery(prompt, lower, user);
             case "CUSTOMER" -> handleCustomerQuery(prompt, lower, user);
             default -> handleGuestQuery(prompt, lower);
         };
+    }
+
+    private ChatResponseDraft handlePaymentFaq() {
+        return new ChatResponseDraft(
+                "💳 **StockFlow Payment Orchestration & Gateways:**\n\n" +
+                "- Payments use a **decoupled, non-blocking 3-step orchestration architecture**.\n" +
+                "- Database transactions are never held open across external gateway HTTP network calls, completely eliminating connection pool starvation.\n" +
+                "- Major credit/debit cards and mock payment providers are supported with HMAC-SHA256 signed webhook ingestion.\n" +
+                "- Uncertain payment timeouts are recorded in status `UNCERTAIN` and reconciled asynchronously by the `PaymentReconciliationWorker`.\n\n" +
+                "💡 *To pay for a pending order, submit `POST /api/v1/payments/initiate` or use the storefront order console.*",
+                "PAYMENT_FAQ",
+                List.of(
+                        new ChatAction("Check My Orders", "QUERY", "Show my recent orders"),
+                        new ChatAction("Browse Products", "QUERY", "Show available products")
+                )
+        );
+    }
+
+    private ChatResponseDraft handleShippingFaq() {
+        return new ChatResponseDraft(
+                "📦 **StockFlow Shipping & Carrier Fulfillment:**\n\n" +
+                "- Verified merchants dispatch orders within **1-2 business days**.\n" +
+                "- Supported logistics carriers include **FedEx, UPS, and DHL**.\n" +
+                "- Every shipment is issued a carrier tracking number (e.g. `TRK-FEDEX-998877`).\n" +
+                "- Delivery confirmation transitions orders to `DELIVERED` and opens the 30-day return window.",
+                "SHIPPING_POLICY",
+                List.of(
+                        new ChatAction("Track My Orders", "QUERY", "Show my recent orders"),
+                        new ChatAction("Return Policy", "QUERY", "What is the return policy?")
+                )
+        );
+    }
+
+    private ChatResponseDraft handleReturnPolicyFaq() {
+        return new ChatResponseDraft(
+                "🔄 **StockFlow 30-Day Return & Refund Policy:**\n\n" +
+                "- Customers can submit return requests on any delivered order within **30 days**.\n" +
+                "- Merchants review each request and inspect returned physical goods.\n" +
+                "- Returns are routed to disposition: `RESTOCK` (returns units to available pool), `QUARANTINE`, or `SCRAP`.\n" +
+                "- Refunds are issued back to the original payment method up to the verified order balance.",
+                "RETURN_POLICY",
+                List.of(
+                        new ChatAction("Check Categories", "QUERY", "What categories are available?"),
+                        new ChatAction("My Orders", "QUERY", "Show my recent orders")
+                )
+        );
     }
 
     // =========================================================================
@@ -303,24 +360,48 @@ public class ChatbotService {
     }
 
     private ChatResponseDraft searchCatalogPublic(String query) {
-        String cleanQuery = query.replaceAll("(?i)(search|find|show|products?|for|cheap|buy)", "").trim();
+        // 1. Extract optional price constraint (e.g. "under $250", "below 200", "under 300")
+        BigDecimal maxPrice = null;
+        Matcher priceMatcher = Pattern.compile("(?i)(?:under|below|less than|max)\\s*\\$?([0-9]+(?:\\.[0-9]+)?)").matcher(query);
+        if (priceMatcher.find()) {
+            try {
+                maxPrice = new BigDecimal(priceMatcher.group(1));
+            } catch (Exception ignored) {}
+        }
+
+        // 2. Clean query of stopwords
+        String cleanQuery = query.toLowerCase()
+                .replaceAll("(?i)\\b(under|below|less than|max)\\s*\\$?([0-9]+(?:\\.[0-9]+)?)\\b", " ")
+                .replaceAll("(?i)\\b(search|find|show|list|browse|get|give|me|all|any|available|products?|items?|catalog|in|for|cheap|cheapest|buy|shop|store|recommend|recommendations?|best|our|the|a|an|please|what|do|you|have|equipment|gear)\\b", " ")
+                .replaceAll("[^a-zA-Z0-9\\s]", " ")
+                .trim();
+
+        // 3. Normalize common plural forms for substring search
+        if (cleanQuery.endsWith("phones")) {
+            cleanQuery = cleanQuery.substring(0, cleanQuery.length() - 1);
+        }
+
         Page<Product> page = productRepository.searchPublicCatalog(
                 null,
                 null,
-                null,
+                maxPrice,
                 cleanQuery.isEmpty() ? null : cleanQuery,
                 PageRequest.of(0, 5)
         );
 
         if (page.isEmpty()) {
-            return new ChatResponseDraft(
-                    "🔍 I couldn't find any active products matching your search. Would you like to explore our top categories?",
-                    "CATALOG_SEARCH_EMPTY",
-                    List.of(
-                            new ChatAction("View Categories", "QUERY", "Show categories"),
-                            new ChatAction("View All Products", "QUERY", "Show all products")
-                    )
-            );
+            // Fallback to active catalog items
+            page = productRepository.searchPublicCatalog(null, null, maxPrice, null, PageRequest.of(0, 5));
+            if (page.isEmpty()) {
+                return new ChatResponseDraft(
+                        "🔍 I couldn't find any active products matching your search criteria. Would you like to explore our top categories?",
+                        "CATALOG_SEARCH_EMPTY",
+                        List.of(
+                                new ChatAction("View Categories", "QUERY", "Show categories"),
+                                new ChatAction("View All Products", "QUERY", "Show all products")
+                        )
+                );
+            }
         }
 
         StringBuilder sb = new StringBuilder("🛍️ **Available Products in StockFlow:**\n\n");
@@ -369,27 +450,27 @@ public class ChatbotService {
         }
 
         // 2. General Orders / Recent Orders
-        if (matchesAny(lower, "my orders", "recent orders", "order status", "where is my order", "orders")) {
+        if (matchesAny(lower, "my order", "my orders", "recent orders", "order status", "where is my order", "orders", "track", "tracking", "package", "where is order")) {
             return listCustomerRecentOrders(customer);
         }
 
         // 3. Cart & Checkout Inquiries
-        if (matchesAny(lower, "my cart", "cart", "basket", "checkout", "items in cart")) {
+        if (matchesAny(lower, "my cart", "cart", "basket", "bag", "checkout", "items in cart", "what is in my cart", "cart items")) {
             return inspectCustomerCart(customer);
         }
 
         // 4. Cancellation Inquiries
-        if (matchesAny(lower, "cancel", "cancellation", "cancel order")) {
+        if (matchesAny(lower, "cancel", "cancellation", "cancel order", "cancelling", "eligible for cancellation")) {
             return explainCustomerCancellation(customer);
         }
 
         // 5. Returns & Refunds
-        if (matchesAny(lower, "return", "refund", "return request", "return item")) {
+        if (matchesAny(lower, "return", "refund", "return request", "return item", "money back")) {
             return inspectCustomerReturns(customer);
         }
 
-        // 6. Product search
-        if (matchesAny(lower, "product", "search", "find", "buy", "shop")) {
+        // 6. Product search & recommendations
+        if (matchesAny(lower, "product", "search", "find", "buy", "shop", "recommend", "suggestion", "audio", "headphone", "gear", "under", "available")) {
             return searchCatalogPublic(lower);
         }
 
