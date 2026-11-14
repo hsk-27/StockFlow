@@ -41,26 +41,26 @@ public class ReportingService {
 
     @Transactional(readOnly = true)
     public OperationalMetricsResponse getOperationalMetrics() {
-        List<Order> orders = orderRepository.findAll();
-        long totalOrders = orders.size();
+        long totalOrders = orderRepository.count();
 
         Map<String, Long> statusDistribution = new HashMap<>();
         for (OrderStatus status : OrderStatus.values()) {
             statusDistribution.put(status.name(), 0L);
         }
 
-        for (Order o : orders) {
-            statusDistribution.put(o.getStatus().name(), statusDistribution.get(o.getStatus().name()) + 1);
+        List<Object[]> groupedCounts = orderRepository.countOrdersByStatusGrouped();
+        for (Object[] row : groupedCounts) {
+            OrderStatus status = (OrderStatus) row[0];
+            Long count = (Long) row[1];
+            if (status != null && count != null) {
+                statusDistribution.put(status.name(), count);
+            }
         }
 
-        List<Payment> succeededPayments = paymentRepository.findByStatus(PaymentStatus.SUCCEEDED);
-        BigDecimal totalRevenue = succeededPayments.stream()
-                .map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        long lowStockCount = inventoryRepository.findLowStock(10).size();
+        BigDecimal totalRevenue = paymentRepository.sumAmountByStatus(PaymentStatus.SUCCEEDED);
+        long lowStockCount = inventoryRepository.countLowStock(10);
         long totalUsers = userRepository.count();
-        long pendingOutbox = outboxEventRepository.count();
+        long pendingOutbox = outboxEventRepository.countByStatus("PENDING");
 
         return new OperationalMetricsResponse(
                 totalOrders,

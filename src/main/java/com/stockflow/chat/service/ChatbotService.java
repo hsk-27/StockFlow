@@ -663,7 +663,7 @@ public class ChatbotService {
         Seller seller = sellerOpt.get();
 
         // 1. Low Stock & Inventory Alerts
-        if (matchesAny(lower, "low stock", "stock alert", "running low", "out of stock")) {
+        if (matchesAny(lower, "low stock", "stock alert", "running low", "out of stock", "safety threshold", "threshold", "below safety")) {
             return inspectSellerLowStock(seller);
         }
 
@@ -824,7 +824,7 @@ public class ChatbotService {
 
     private ChatResponseDraft handleAdminQuery(String prompt, String lower, User admin) {
         // 1. Platform Metrics & Revenue
-        if (matchesAny(lower, "metric", "revenue", "financial", "sales", "kpi", "overview", "stats")) {
+        if (matchesAny(lower, "metric", "revenue", "financial", "sales", "kpi", "overview", "stats", "gmv", "gross merchandise", "volume", "distribution", "breakdown")) {
             return inspectPlatformMetrics();
         }
 
@@ -834,7 +834,7 @@ public class ChatbotService {
         }
 
         // 3. Outbox & Background Workers
-        if (matchesAny(lower, "outbox", "worker", "queue", "background", "job", "event")) {
+        if (matchesAny(lower, "outbox", "worker", "queue", "background", "job", "event", "backlog")) {
             return inspectOutboxQueueHealth();
         }
 

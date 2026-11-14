@@ -36,5 +36,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, UUID> {
     @Query("SELECT i FROM Inventory i WHERE (i.onHand - i.reserved) <= :threshold")
     List<Inventory> findLowStock(@Param("threshold") int threshold);
 
+    @Query("SELECT COUNT(i) FROM Inventory i WHERE (i.onHand - i.reserved) <= :threshold")
+    long countLowStock(@Param("threshold") int threshold);
+
     Page<Inventory> findBySellerId(UUID sellerId, Pageable pageable);
 }

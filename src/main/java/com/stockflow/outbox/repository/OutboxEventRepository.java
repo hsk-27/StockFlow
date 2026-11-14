@@ -24,4 +24,6 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, UUID> 
 
     @Query("SELECT e FROM OutboxEvent e WHERE e.status = 'PENDING' AND e.nextAttemptAt <= :now ORDER BY e.createdAt ASC")
     List<OutboxEvent> findPendingEventsFallback(@Param("now") Instant now, Pageable pageable);
+
+    long countByStatus(String status);
 }

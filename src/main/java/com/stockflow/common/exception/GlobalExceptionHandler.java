@@ -106,6 +106,21 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ProblemDetail handleUnauthorized(UnauthorizedException ex) {
+        log.warn("Unauthorized access attempt: {}", ex.getMessage());
+        boolean isAuthError = ex.getMessage() != null &&
+                (ex.getMessage().toLowerCase().contains("signature") ||
+                 ex.getMessage().toLowerCase().contains("token") ||
+                 ex.getMessage().toLowerCase().contains("deactivated"));
+        HttpStatus status = isAuthError ? HttpStatus.UNAUTHORIZED : HttpStatus.FORBIDDEN;
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setTitle(isAuthError ? "Authentication Required" : "Access Denied");
+        problem.setType(URI.create("https://stockflow.io/errors/" + (isAuthError ? "unauthorized" : "forbidden")));
+        enrichProblem(problem);
+        return problem;
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.error("Data integrity violation: ", ex);
