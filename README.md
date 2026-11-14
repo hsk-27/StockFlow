@@ -12,11 +12,16 @@
 
 ---
 
-### 🌐 Interactive Showcase & Testing Tools
-- **Web Portfolio Dashboard:** Visit `http://localhost:8080/` when the app runs for an interactive landing page featuring pre-seeded credentials, Swagger UI links, and health metrics.
+### 🌐 Interactive Showcase & Documentation
+- **Web Portfolio Dashboard:** Visit `http://localhost:8080/` (or `http://localhost:8081/` locally) for the **Shopify Polaris** interactive storefront, live cart checkout, and **Shopify Sidekick AI**.
 - **OpenAPI 3.0 & Swagger UI:** `http://localhost:8080/swagger-ui.html`
 - **Actuator Health & Prometheus Scrape:** `http://localhost:8080/actuator/health` & `http://localhost:8080/actuator/prometheus`
-- **Executable HTTP Client Suite:** Open [`requests.http`](file:///C:/Users/Dell/.gemini/antigravity/scratch/stockflow/requests.http) in VS Code (REST Client extension) or IntelliJ IDEA HTTP Client to run all 11 lifecycle workflows end-to-end with one click!
+- **Executable HTTP Client Suite:** Open [`requests.http`](requests.http) in VS Code or IntelliJ HTTP Client for 1-click execution across all 11 modules and negative edge cases.
+- **Detailed Engineering Guides:**
+  - 📐 [Comprehensive System Architecture & ADRs](docs/ARCHITECTURE.md)
+  - 📖 [REST API Specifications & Schemas](docs/API_DOCUMENTATION.md)
+  - 🧪 [Testing & Concurrency Verification Strategy](docs/TESTING_AND_VERIFICATION.md)
+  - 🚀 [GitHub Web & Browser Upload Guide](docs/GITHUB_WEB_UPLOAD_GUIDE.md)
 
 ---
 
@@ -160,8 +165,10 @@ stateDiagram-v2
 ## 5. Database Schema & Invariants
 
 Flyway manages migrations under `src/main/resources/db/migration/`:
-- `V1__initial_schema.sql`: Authoritative schema DDL.
-- `V2__seed_data.sql`: Development seed fixtures.
+- `V1__initial_schema.sql`: Authoritative schema DDL & constraints.
+- `V2__seed_data.sql`: Multi-vendor development seed fixtures.
+- `V3__chat_schema.sql`: Conversational assistant history & sessions.
+- `V4__performance_indexes.sql`: High-throughput relational query B-tree indexes.
 
 ### Key Relational Invariants Enforced in PostgreSQL:
 1. `chk_inventory_quantities`: `CHECK (on_hand >= 0 AND reserved >= 0 AND reserved <= on_hand)`
@@ -294,7 +301,7 @@ The repository is fully configured for continuous integration and automated cont
 
 ## 8. Verification & Concurrency Test Results
 
-The project test suite validates **68 automated test cases across 20 test classes** covering domain invariants, concurrency, idempotency, horizontal/vertical privilege escalation, conversational NLP chatbot assistance, and full lifecycle commerce workflows:
+The project test suite validates **73 automated test cases across 22 test classes (100% Pass Rate)** covering domain invariants, concurrency, idempotency, horizontal/vertical privilege escalation, conversational NLP chatbot assistance, and full lifecycle commerce workflows:
 - **FullCommerceIntegrationTest**: Live Spring Boot @SpringBootTest verifying application context loading, Flyway schema validation (V1, V2, V3), Actuator /actuator/health reporting, authentic BCrypt authentication, catalog browsing, cart operations, atomic checkout with idempotency deduplication replay, and multi-turn chatbot inquiries.
 - **ConcurrentCheckoutIntegrationTest & HighConcurrencyLoadTest**: Validates 50+ concurrent purchase attempts against the last available unit with zero overselling.
 - **SecurityAccessControlIntegrationTest**: Validates role-based authorization, broken object-level authorization (BOLA) defenses, and access token validation.
