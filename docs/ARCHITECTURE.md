@@ -51,7 +51,7 @@ graph TD
 ### ADR 001: Modular Monolith vs. Distributed Microservices
 * **Context:** E-commerce transactions require strict consistency across inventory reservations, order snapshots, and payment states.
 * **Decision:** Build a modular monolith in a single deployable artifact with strict package-by-feature domain boundaries.
-* **Consequences:** Eliminates distributed two-phase commit overhead, network partitions, and dual-write anomalies while maintaining compile-time type safety. Can be decomposed into independent microservices in the future if organizational scaling requires it.
+* **Consequences:** Eliminates distributed two-phase commit overhead, network partitions, and dual-write anomalies while maintaining compile-time type safety and strict modular domain isolation.
 
 ### ADR 002: Deterministic Ascending SKU Locking (Dijkstra's Resource Hierarchy)
 * **Context:** Multi-item checkouts locking multiple inventory records concurrently can produce deadlocks if transactions lock records in differing sequences (e.g., Thread 1 locks SKU-A then SKU-B; Thread 2 locks SKU-B then SKU-A).
