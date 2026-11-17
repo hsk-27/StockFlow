@@ -1,6 +1,6 @@
 ### =======================================================================
 ### StockFlow API Client Test Suite (VS Code REST Client / IntelliJ HTTP Client)
-### Senior Capstone Demonstration Workflows
+### Platform End-to-End Execution Workflows
 ### =======================================================================
 
 @baseUrl = http://localhost:8080/api/v1

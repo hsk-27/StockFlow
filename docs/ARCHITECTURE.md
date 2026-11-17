@@ -1,8 +1,8 @@
-# StockFlow &bull; Comprehensive System Architecture & Engineering Specifications
+# StockFlow &bull; System Architecture & Engineering Specifications
 
-### 🎓 Computer Science Honours & Capstone Portfolio Documentation
-**Author:** Senior Computer Science Capstone Project  
-**Platform:** Java 21 LTS | Spring Boot 3.3.5 | PostgreSQL 16 | Flyway 10.x | Docker
+### Enterprise Multi-Vendor Commerce Platform
+**Platform:** Java 21 LTS | Spring Boot 3.3.5 | PostgreSQL 16 | Flyway 10.x | Docker  
+**Standard:** Modular Monolith Architecture with ACID Invariants
 
 ---
 

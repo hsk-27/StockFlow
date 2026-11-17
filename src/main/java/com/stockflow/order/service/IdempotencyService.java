@@ -44,7 +44,7 @@ import java.util.UUID;
  *  5. If the request already completed previously -> Replay the cached HTTP 201 response directly
  *     without re-executing inventory reservations or payment processing!
  *
- * @author Senior CS Capstone Project
+ * @author StockFlow Platform Engineering
  */
 @Service
 public class IdempotencyService {

@@ -35,7 +35,7 @@ import java.util.Map;
  *  - detail: Human-readable explanation specific to this occurrence.
  *  - timestamp & correlationId: Enriched for distributed tracing and log analysis.
  *
- * @author Senior CS Capstone Project
+ * @author StockFlow Platform Engineering
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

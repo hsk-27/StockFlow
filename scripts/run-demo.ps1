@@ -1,9 +1,9 @@
-# ==============================================================================
-# StockFlow Senior Capstone Quick-Start Launcher (Windows PowerShell)
+﻿# ==============================================================================
+# StockFlow Platform Quick-Start Launcher (Windows PowerShell)
 # ==============================================================================
 
 Write-Host "======================================================================" -ForegroundColor Cyan
-Write-Host "  StockFlow — Senior CS Capstone Engineering Portfolio" -ForegroundColor Cyan
+Write-Host "  StockFlow — Multi-Vendor Commerce Platform" -ForegroundColor Cyan
 Write-Host "  Java 21 | Spring Boot 3.3.5 | PostgreSQL 16" -ForegroundColor Cyan
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host ""

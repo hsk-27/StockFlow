@@ -32,7 +32,7 @@ import java.util.Set;
  *
  * Terminal States: EXPIRED, CANCELLED, REFUNDED.
  *
- * @author Senior CS Capstone Project
+ * @author StockFlow Platform Engineering
  */
 public enum OrderStatus {
     PENDING_PAYMENT,

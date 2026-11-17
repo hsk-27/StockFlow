@@ -36,7 +36,7 @@ import java.util.List;
  *  5. Rate Limiting: Sliding-window memory bucket per IP to defeat brute-force password spraying.
  *  6. RFC 7807 Error Sanitization: Never leaks database stack traces to the caller.
  *
- * @author Senior CS Capstone Project
+ * @author StockFlow Platform Engineering
  */
 @Configuration
 @EnableWebSecurity

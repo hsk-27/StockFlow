@@ -8,7 +8,7 @@ CREATE INDEX IF NOT EXISTS idx_returns_seller ON return_requests(seller_id);
 -- 2. Accelerate multi-vendor seller shipments lookup
 CREATE INDEX IF NOT EXISTS idx_shipments_seller ON shipments(seller_id);
 
--- 3. Accelerate seller inventory portfolio and low-stock queries
+-- 3. Accelerate seller inventory catalog and low-stock queries
 CREATE INDEX IF NOT EXISTS idx_inventory_seller ON inventory(seller_id);
 
 -- 4. Accelerate time-series order sorting and customer dashboard queries

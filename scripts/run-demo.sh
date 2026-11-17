@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# StockFlow Senior Capstone Quick-Start Launcher (Linux / macOS Bash)
+# StockFlow Platform Quick-Start Launcher (Linux / macOS Bash)
 # ==============================================================================
 
 set -e
 
 echo "======================================================================"
-echo "  StockFlow — Senior CS Capstone Engineering Portfolio"
+echo "  StockFlow — Multi-Vendor Commerce Platform"
 echo "  Java 21 | Spring Boot 3.3.5 | PostgreSQL 16"
 echo "======================================================================"
 echo ""

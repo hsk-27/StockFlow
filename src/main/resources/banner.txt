@@ -6,7 +6,7 @@
   ____) | || (_) | (__|   <| |    | | (_) \ V  V /   
  |_____/ \__\___/ \___|_|\_\_|    |_|\___/ \_/\_/    
                                                      
- :: StockFlow Commerce & Inventory Orchestration Backend ::
- :: University Capstone Project | Java 21 | Spring Boot 3.3.5 ::
- :: Author: Senior CS Portfolio Project ::
+ :: StockFlow Multi-Vendor Commerce & Order Orchestration Engine ::
+ :: Enterprise Edition | Java 21 LTS | Spring Boot 3.3.5 ::
+ :: (v1.0.0-RELEASE) ::
 

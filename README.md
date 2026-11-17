@@ -1,5 +1,5 @@
-# StockFlow — Multi-Vendor Commerce, Inventory & Order Orchestration Engine
-### 🎓 Senior Computer Science Capstone & Honours Portfolio Project
+# StockFlow &bull; Multi-Vendor Commerce & Order Orchestration Engine
+### Enterprise High-Concurrency Inventory, Non-Blocking Payments & ACID Order Lifecycle
 
 [![Java 21](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot 3.3.5](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
@@ -8,12 +8,12 @@
 [![Automated Tests](https://img.shields.io/badge/tests-73%2F73%20passing-brightgreen.svg)]()
 [![Code Quality](https://img.shields.io/badge/quality-production--grade-blue.svg)]()
 
-> **Project Abstract:** StockFlow is an enterprise-grade multi-vendor commerce, inventory, order orchestration, payment, and fulfilment backend engineered as a modular monolith in **Java 21** and **Spring Boot 3.3.5**, backed by **PostgreSQL 16** as the authoritative single source of truth. Designed and defended as an undergraduate Computer Science capstone project, it models and solves the most notorious distributed consistency challenges in modern commerce without relying on superficial CRUD simplifications.
+> **StockFlow** is an enterprise-grade multi-vendor commerce, inventory, order orchestration, payment, and fulfilment engine engineered as a modular monolith in **Java 21** and **Spring Boot 3.3.5**, backed by **PostgreSQL 16** as the authoritative ACID source of truth. It models and solves mission-critical distributed commerce challenges—including zero-overselling inventory invariants, idempotent checkout deduplication, non-blocking payment boundaries, and transactional outbox event delivery—with strict consistency and production-grade resilience.
 
 ---
 
-### 🌐 Interactive Showcase & Documentation
-- **Web Portfolio Dashboard:** Visit `http://localhost:8080/` (or `http://localhost:8081/` locally) for the **Shopify Polaris** interactive storefront, live cart checkout, and **Shopify Sidekick AI**.
+### 🌐 System Endpoints & Documentation
+- **Storefront & Merchant Console:** Visit `http://localhost:8080/` for the **Shopify Polaris** interactive storefront, live cart checkout, and merchant copilot.
 - **OpenAPI 3.0 & Swagger UI:** `http://localhost:8080/swagger-ui.html`
 - **Actuator Health & Prometheus Scrape:** `http://localhost:8080/actuator/health` & `http://localhost:8080/actuator/prometheus`
 - **Executable HTTP Client Suite:** Open [`requests.http`](requests.http) in VS Code or IntelliJ HTTP Client for 1-click execution across all 11 modules and negative edge cases.
@@ -21,11 +21,10 @@
   - 📐 [Comprehensive System Architecture & ADRs](docs/ARCHITECTURE.md)
   - 📖 [REST API Specifications & Schemas](docs/API_DOCUMENTATION.md)
   - 🧪 [Testing & Concurrency Verification Strategy](docs/TESTING_AND_VERIFICATION.md)
-  - 🚀 [GitHub Web & Browser Upload Guide](docs/GITHUB_WEB_UPLOAD_GUIDE.md)
 
 ---
 
-## 1. System Overview & Portfolio Architecture
+## 1. System Overview & Core Architecture
 
 StockFlow solves the core consistency and reliability failure modes of distributed commerce systems:
 - **Zero Overselling Invariant**: High-concurrency inventory reservation engine using sorted row locks (`ORDER BY sku ASC FOR UPDATE`) coupled with relational check constraints (`chk_inventory_quantities`).
